@@ -1,0 +1,406 @@
+/* Biến màu sắc */
+$primary-color: #ea68ab;
+$hover-color: #bcefd5;
+$border-color: #ddd;
+$input-focus-color: #798ffc;
+$background-color-light: #f9fafb;
+$background-color-dark: #e0f2e9;
+$button-radius: 8px;
+
+/* Vùng chứa chính */
+section {
+  padding: 24px;
+  background-color: #f9fafb;
+  margin-left: -25px;
+  overflow-x: hidden;
+}
+
+/* Tiêu đề */
+h1 {
+  font-size: 20px;
+  font-weight: bold;
+  margin: 0 0 20px 10px;
+}
+
+/* Button */
+button {
+  padding: 8px 12px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: bold;
+  transition: background-color 0.3s ease;
+  background-color: #ea68ab;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  color: white;
+}
+
+/* 3button cn */
+.button-group {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  margin-left: auto;
+  justify-content: flex-end;
+  width: 100%;
+  margin-bottom: 10px;
+}
+
+button:hover {
+  opacity: 0.9;
+  background-color: #bcefd5;
+  color: #660053;
+}
+
+/* Gird container */
+.gird-container {
+  max-width: 90%;
+}
+
+/* Input fields */
+input,
+select {
+  border: 1px solid #ccc;
+  padding: 12px;
+  border-radius: 2px;
+  font-size: 14px;
+  width: 100%;
+  background-color: white;
+  color: black;
+}
+
+.input-wrapper {
+  padding: 5px;
+  width: 450px;
+}
+
+.input-wrapper input:focus {
+  border-color: #798ffc !important;
+  box-shadow: 0 0 0 1px #798ffc;
+  outline: none;
+}
+
+/* Form input group */
+.form-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+/* Điều chỉnh từng input trong form */
+.form-group input,
+.form-group select {
+  flex: 1;
+  min-width: 150px;
+}
+
+/* Bảng dữ liệu */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+  background-color: white;
+}
+
+th,
+td {
+  padding: 12px;
+  text-align: left;
+  border-bottom: 1px solid #ddd;
+}
+
+th {
+  background-color: #e0f2e9;
+  font-weight: bold;
+}
+
+/* Hover row */
+tr:hover {
+  background-color: #f5f5f5;
+}
+
+/* Tổng số */
+.total {
+  font-weight: bold;
+  margin-top: 10px;
+  text-align: right;
+}
+
+.xem-chi-tiet {
+  border: 2px solid green;
+  padding: 8px 16px;
+  border-radius: 20px;
+  color: green;
+  background: white;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.xem-chi-tiet:hover {
+  background: green;
+  color: white;
+}
+
+/* Form container */
+.form-container {
+  width: 100vw;
+  max-width: 93%;
+  background-color: rgb(255, 255, 255);
+  padding: 16px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  display: grid;
+  grid-template-columns: repeat(1, 1fr);
+  gap: 10px;
+  align-items: center;
+  justify-content: flex-start;
+  margin-bottom: 20px;
+  box-sizing: border-box;
+  overflow: visible !important;
+}
+
+.grid-rows-2 > div {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+}
+
+/* Dropdown menu fix */
+.relative.w-full .absolute {
+  background-color: white !important;
+  z-index: 9999 !important;
+  border: 1px solid #ccc !important;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1) !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+  width: 345px !important;
+}
+
+.relative.w-full .absolute div,
+.relative.w-full .absolute li { /* Áp dụng cho từng dòng */
+  padding: 8px;
+  cursor: pointer;
+}
+
+.relative.w-full .absolute div:hover,
+.relative.w-full .absolute li:hover {
+  background-color: #f0f0f0 !important; /* Đổi màu nền từng dòng khi hover */
+}
+
+/* Date */
+.react-datepicker-wrapper {
+  width: 100%;
+}
+
+.react-datepicker__input-container input {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 2px;
+  font-size: 14px;
+  transition: border-color 0.3s ease;
+}
+
+.react-datepicker {
+  font-size: 14px;
+}
+
+.react-datepicker__header {
+  background-color: #f0f0f0;
+}
+
+/* Xóa viền xanh khi chọn nhiều giá trị */
+.custom-select__multi-value {
+  background-color: transparent !important;
+  box-shadow: none !important;
+  border: none !important;
+}
+
+/* Loại bỏ viền xanh của từng giá trị */
+.custom-select__multi-value__label {
+  box-shadow: none !important;
+  border: none !important;
+  outline: none !important;
+}
+
+/* Loại bỏ focus trên input */
+.custom-select__input-container {
+  box-shadow: none !important;
+  border: none !important;
+  outline: none !important;
+}
+
+/* Chỉnh lại focus của dropdown tổng */
+.custom-select:focus,
+.custom-select:focus-visible {
+  outline: none !important;
+  box-shadow: none !important;
+  border: none !important;
+}
+
+.datepicker-container {
+  display: flex;
+  align-items: center;
+  gap: 2px; /* Khoảng cách giữa các phần tử */
+  border: 1px solid rgb(202, 202, 202); /* Tạo viền đen */
+  padding: 4px; /* Thêm khoảng cách bên trong để viền không sát nội dung */
+  border-radius: 2px; /* Bo góc nhẹ */
+  width: 200%;
+  height: 41px;
+  margin-top: 5px;
+}
+
+.datepicker-Day {
+  display: flex;
+  align-items: center;
+  gap: 2px; /* Khoảng cách giữa các phần tử */
+  border: 1px solid rgb(202, 202, 202); /* Tạo viền đen */
+  padding: 4px; /* Thêm khoảng cách bên trong để viền không sát nội dung */
+  border-radius: 2px; /* Bo góc nhẹ */
+  width: 200%;
+  height: 41px;
+  margin-top: 5px;
+}
+
+.datepicker-Day:focus-within {
+  border-color: #798ffc !important;
+  box-shadow: 0 0 0 1px #798ffc;
+  outline: none;
+}
+
+.datepicker {
+  width: 100% !important;
+  padding: 5px;
+  border: none !important; /* Xóa viền */
+  outline: none !important; /* Xóa viền khi focus */
+  text-align: left;
+}
+
+/* Container chính để đảm bảo chia đều */
+.filter-container {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr); /* 4 cột bằng nhau */
+  gap: 14px;
+  align-items: center; /* Căn giữa theo chiều dọc */
+}
+
+/* Wrapper cho từng input/select */
+.filter-item {
+  width: 94%;
+  padding: 10px 0px 20px;
+  margin-left: 5px;
+}
+
+/* Định dạng cho Select */
+.custom-select {
+  width: 100% !important;
+}
+
+/* Định dạng cho Input */
+.custom-input {
+  width: 100%;
+  padding: 4px;
+  border: 1px solid #ccc;
+  border-radius: 2px;
+}
+
+/* Tổng thể phần nội dung */
+.text-lg {
+  padding: auto;
+  margin-top: -10px;
+}
+
+.content-wrapper {
+  padding: 16px;
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  width: 93%;
+  margin-bottom: 20px;
+}
+
+/* Chia bảng thành 2 cột chiếm 94% */
+.tables-wrapper {
+   display: flex;
+  gap: 16px;
+  width: 100%;
+  margin: -15px auto 20px;
+  height: 300px;
+}
+
+/* Mỗi bảng chiếm 50% (chia đều) */
+.table-container {
+  flex: 1;
+  overflow-x: auto;
+  border-radius: 2px;
+  border: 1px solid #ddd;
+  background-color: #fafafa;
+  padding: 8px;
+  overflow: auto;
+  scrollbar-width: none; /* Firefox */
+  font-size: 13px;
+}
+
+.table-container::-webkit-scrollbar {
+  display: none; /* Chrome, Safari */
+}
+
+/* Header bảng */
+.table-container thead {
+  background-color: #d1fae5;
+}
+
+/* Dòng trong bảng */
+.table-container tbody tr {
+  transition: background-color 0.2s ease-in-out;
+}
+
+/* Hover */
+.table-container tbody tr:hover {
+  background-color: #f3f4f6;
+  cursor: pointer;
+}
+
+/* Ô bảng */
+.table-container td,
+.table-container th {
+  border-right: 1px solid #ddd;
+  padding: 12px;
+  text-align: left;
+  border-bottom: 1px solid #ddd;
+}
+
+/* Phần chi tiết */
+.details-section {
+  margin-top: 16px;
+  padding: 16px;
+  background-color: #f9fafb;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+}
+
+.button-container {
+  display: flex;
+  text-align: center !important; /* Căn giữa */
+  justify-content: center !important;
+  margin-bottom: 16px; /* Khoảng cách với phần dưới */
+}
+
+.hide-button {
+  text-align: center !important; /* Căn giữa */
+  margin-top: 12px; /* Khoảng cách với phần dưới */
+}
+
+.react-select__control {
+  overflow: visible;  /* Đảm bảo rằng phần thừa không bị ẩn */
+  text-overflow: unset;  /* Loại bỏ dấu chấm dọc */
+  white-space: normal;  /* Cho phép văn bản xuống dòng nếu cần */
+}
+
+.react-select__value-container {
+  overflow: visible;  /* Đảm bảo rằng giá trị đã chọn không bị cắt */
+  text-overflow: unset;  /* Loại bỏ dấu chấm dọc */
+  white-space: normal;  /* Cho phép văn bản xuống dòng nếu cần */
+}

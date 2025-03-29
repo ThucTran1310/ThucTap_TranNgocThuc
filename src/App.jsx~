@@ -1,0 +1,20 @@
+import { ThemeProvider } from '@/theme/index.jsx';
+import Router from '@/routes/index.jsx';
+import { QueryClientProvider } from '@tanstack/react-query';
+
+//config
+import { queryClient } from '@/configs/query.js';
+
+// ----------------------------------------------------------------------
+
+function App() {
+  return (
+    <QueryClientProvider client={queryClient}>
+      <ThemeProvider>
+        <Router />
+      </ThemeProvider>
+    </QueryClientProvider>
+  );
+}
+
+export default App;
