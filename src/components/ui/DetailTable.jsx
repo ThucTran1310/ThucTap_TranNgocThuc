@@ -27,7 +27,7 @@ const DetailTable = () => {
 
             {/*Hiển thị bảng*/}
             {showTable && (
-                <div className="table-container">
+                <div className="content-wrapper">
                     <Table>
                         <TableHead>
                             <TableRow className="bg-green-100">

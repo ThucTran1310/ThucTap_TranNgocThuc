@@ -24,5 +24,13 @@ body {
     line-height: 1.5715;
     margin: 0;
 }
-
+html, body, #root {
+  height: 100%;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  background-color: #f9fafb; /* Cùng màu với section background */
+  overflow-x: hidden; /* Ngăn tràn ngang */
+  box-sizing: border-box;
+}
 

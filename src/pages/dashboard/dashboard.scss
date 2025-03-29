@@ -9,9 +9,12 @@ $button-radius: 8px;
 
 /* Vùng chứa chính */
 section {
-  padding: 24px;
+  padding: 24px 16px;
   background-color: #f9fafb;
-  margin-left: -25px;
+  margin: 0;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
   overflow-x: hidden;
 }
 
@@ -37,7 +40,6 @@ button {
   color: white;
 }
 
-/* 3button cn */
 .button-group {
   display: flex;
   gap: 8px;
@@ -54,12 +56,10 @@ button:hover {
   color: #660053;
 }
 
-/* Gird container */
 .gird-container {
   max-width: 90%;
 }
 
-/* Input fields */
 input,
 select {
   border: 1px solid #ccc;
@@ -73,7 +73,8 @@ select {
 
 .input-wrapper {
   padding: 5px;
-  width: 450px;
+  width: 100%;
+  max-width: 450px;
 }
 
 .input-wrapper input:focus {
@@ -82,7 +83,6 @@ select {
   outline: none;
 }
 
-/* Form input group */
 .form-group {
   display: flex;
   flex-wrap: wrap;
@@ -90,14 +90,12 @@ select {
   margin-bottom: 10px;
 }
 
-/* Điều chỉnh từng input trong form */
 .form-group input,
 .form-group select {
   flex: 1;
   min-width: 150px;
 }
 
-/* Bảng dữ liệu */
 table {
   width: 100%;
   border-collapse: collapse;
@@ -117,12 +115,10 @@ th {
   font-weight: bold;
 }
 
-/* Hover row */
 tr:hover {
   background-color: #f5f5f5;
 }
 
-/* Tổng số */
 .total {
   font-weight: bold;
   margin-top: 10px;
@@ -144,11 +140,10 @@ tr:hover {
   color: white;
 }
 
-/* Form container */
 .form-container {
-  width: 100vw;
-  max-width: 93%;
-  background-color: rgb(255, 255, 255);
+  width: 100%;
+  max-width: 100%;
+  background-color: #fff;
   padding: 16px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   display: grid;
@@ -158,7 +153,6 @@ tr:hover {
   justify-content: flex-start;
   margin-bottom: 20px;
   box-sizing: border-box;
-  overflow: visible !important;
 }
 
 .grid-rows-2 > div {
@@ -167,7 +161,6 @@ tr:hover {
   gap: 16px;
 }
 
-/* Dropdown menu fix */
 .relative.w-full .absolute {
   background-color: white !important;
   z-index: 9999 !important;
@@ -179,17 +172,16 @@ tr:hover {
 }
 
 .relative.w-full .absolute div,
-.relative.w-full .absolute li { /* Áp dụng cho từng dòng */
+.relative.w-full .absolute li {
   padding: 8px;
   cursor: pointer;
 }
 
 .relative.w-full .absolute div:hover,
 .relative.w-full .absolute li:hover {
-  background-color: #f0f0f0 !important; /* Đổi màu nền từng dòng khi hover */
+  background-color: #f0f0f0 !important;
 }
 
-/* Date */
 .react-datepicker-wrapper {
   width: 100%;
 }
@@ -211,28 +203,15 @@ tr:hover {
   background-color: #f0f0f0;
 }
 
-/* Xóa viền xanh khi chọn nhiều giá trị */
-.custom-select__multi-value {
+.custom-select__multi-value,
+.custom-select__multi-value__label,
+.custom-select__input-container {
   background-color: transparent !important;
   box-shadow: none !important;
   border: none !important;
-}
-
-/* Loại bỏ viền xanh của từng giá trị */
-.custom-select__multi-value__label {
-  box-shadow: none !important;
-  border: none !important;
   outline: none !important;
 }
 
-/* Loại bỏ focus trên input */
-.custom-select__input-container {
-  box-shadow: none !important;
-  border: none !important;
-  outline: none !important;
-}
-
-/* Chỉnh lại focus của dropdown tổng */
 .custom-select:focus,
 .custom-select:focus-visible {
   outline: none !important;
@@ -240,26 +219,15 @@ tr:hover {
   border: none !important;
 }
 
-.datepicker-container {
-  display: flex;
-  align-items: center;
-  gap: 2px; /* Khoảng cách giữa các phần tử */
-  border: 1px solid rgb(202, 202, 202); /* Tạo viền đen */
-  padding: 4px; /* Thêm khoảng cách bên trong để viền không sát nội dung */
-  border-radius: 2px; /* Bo góc nhẹ */
-  width: 200%;
-  height: 41px;
-  margin-top: 5px;
-}
-
+.datepicker-container,
 .datepicker-Day {
   display: flex;
   align-items: center;
-  gap: 2px; /* Khoảng cách giữa các phần tử */
-  border: 1px solid rgb(202, 202, 202); /* Tạo viền đen */
-  padding: 4px; /* Thêm khoảng cách bên trong để viền không sát nội dung */
-  border-radius: 2px; /* Bo góc nhẹ */
-  width: 200%;
+  gap: 2px;
+  border: 1px solid rgb(202, 202, 202);
+  padding: 4px;
+  border-radius: 2px;
+  width: 100%;
   height: 41px;
   margin-top: 5px;
 }
@@ -273,32 +241,24 @@ tr:hover {
 .datepicker {
   width: 100% !important;
   padding: 5px;
-  border: none !important; /* Xóa viền */
-  outline: none !important; /* Xóa viền khi focus */
+  border: none !important;
+  outline: none !important;
   text-align: left;
 }
 
-/* Container chính để đảm bảo chia đều */
 .filter-container {
   display: grid;
-  grid-template-columns: repeat(4, 1fr); /* 4 cột bằng nhau */
+  grid-template-columns: repeat(4, 1fr);
   gap: 14px;
-  align-items: center; /* Căn giữa theo chiều dọc */
+  align-items: center;
 }
 
-/* Wrapper cho từng input/select */
 .filter-item {
-  width: 94%;
-  padding: 10px 0px 20px;
-  margin-left: 5px;
+  width: 100%;
+  padding: 10px 0 20px;
 }
 
-/* Định dạng cho Select */
-.custom-select {
-  width: 100% !important;
-}
-
-/* Định dạng cho Input */
+.custom-select,
 .custom-input {
   width: 100%;
   padding: 4px;
@@ -306,7 +266,6 @@ tr:hover {
   border-radius: 2px;
 }
 
-/* Tổng thể phần nội dung */
 .text-lg {
   padding: auto;
   margin-top: -10px;
@@ -317,51 +276,56 @@ tr:hover {
   background-color: #fff;
   border-radius: 8px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  width: 93%;
+  width: 100%;
+  max-width: 100%;
+  padding-left: 16px;
+  padding-right: 16px;
+  box-sizing: border-box;
   margin-bottom: 20px;
+  overflow-x: auto;
 }
 
-/* Chia bảng thành 2 cột chiếm 94% */
 .tables-wrapper {
-   display: flex;
+  display: flex;
   gap: 16px;
   width: 100%;
   margin: -15px auto 20px;
   height: 300px;
+  max-width: 100%;
+  padding-left: 16px;
+  padding-right: 16px;
+  box-sizing: border-box;
 }
 
-/* Mỗi bảng chiếm 50% (chia đều) */
 .table-container {
-    flex: 1;
-    overflow-x: auto;
-    border: none;
-    background-color: transparent;
-    padding: 0;
-    scrollbar-width: none;
-    font-size: 13px;
+  flex: 1;
+  overflow-x: auto;
+  border: 1px solid #ddd;
+  background-color: #fafafa;
+  border-radius: 8px;
+  padding: 8px;
+  font-size: 13px;
+  scrollbar-width: none;
 }
 
 .table-container::-webkit-scrollbar {
-  display: none; /* Chrome, Safari */
+  display: none;
 }
 
-/* Header bảng */
 .table-container thead {
   background-color: #d1fae5;
 }
 
-/* Dòng trong bảng */
-.table-container tbody tr {
-  transition: background-color 0.2s ease-in-out;
-}
-
-/* Hover */
 .table-container tbody tr:hover {
   background-color: #f3f4f6;
   cursor: pointer;
 }
 
-/* Ô bảng */
+.table-container thead tr:hover {
+  background-color: #d1fae5 !important;
+  cursor: default;
+}
+
 .table-container td,
 .table-container th {
   border-right: 1px solid #ddd;
@@ -370,7 +334,6 @@ tr:hover {
   border-bottom: 1px solid #ddd;
 }
 
-/* Phần chi tiết */
 .details-section {
   margin-top: 16px;
   padding: 16px;
@@ -379,43 +342,35 @@ tr:hover {
   border-radius: 8px;
 }
 
-.button-container {
-  display: flex;
-  text-align: center !important; /* Căn giữa */
-  justify-content: center !important;
-  margin-bottom: 16px; /* Khoảng cách với phần dưới */
-}
-
+.button-container,
 .hide-button {
-  text-align: center !important; /* Căn giữa */
-  margin-top: 12px; /* Khoảng cách với phần dưới */
+  display: flex;
+  justify-content: center !important;
+  text-align: center !important;
+  margin: 16px 0;
 }
 
-.react-select__control {
-  overflow: visible;  /* Đảm bảo rằng phần thừa không bị ẩn */
-  text-overflow: unset;  /* Loại bỏ dấu chấm dọc */
-  white-space: normal;  /* Cho phép văn bản xuống dòng nếu cần */
-}
-
+.react-select__control,
 .react-select__value-container {
-  overflow: visible;  /* Đảm bảo rằng giá trị đã chọn không bị cắt */
-  text-overflow: unset;  /* Loại bỏ dấu chấm dọc */
-  white-space: normal;  /* Cho phép văn bản xuống dòng nếu cần */
+  overflow: visible;
+  text-overflow: unset;
+  white-space: normal;
 }
+
 .header-with-total {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 16px;
-  }
-  
-  .section-title {
-    font-size: 18px;
-    font-weight: bold;
-  }
-  
-  .total-count {
-    font-weight: bold;
-    color: #333;
-    font-size: 16px;
-  }
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.section-title {
+  font-size: 18px;
+  font-weight: bold;
+}
+
+.total-count {
+  font-weight: bold;
+  color: #333;
+  font-size: 16px;
+}
