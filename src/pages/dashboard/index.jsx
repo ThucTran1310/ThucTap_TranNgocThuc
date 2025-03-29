@@ -178,7 +178,10 @@ export default function DashBoard() {
             <Card>
                 <CardContent>
                     <div className="content-wrapper">
-                        <h3 className="text-lg font-bold mb-4">Số lượng chờ xử lý theo bộ phận/nghiệp vụ</h3>
+                        <div className="header-with-total">
+                            <h3 className="section-title">Số lượng chờ xử lý theo bộ phận/nghiệp vụ</h3>
+                            <div className="total-count">Tổng: {data.reduce((sum, row) => sum + row.count, 0)}</div>
+                        </div>
                         <div className="tables-wrapper">
                             <div className="table-container">
                                 <Table>

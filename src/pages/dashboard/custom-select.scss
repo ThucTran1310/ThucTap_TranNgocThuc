@@ -1,51 +1,42 @@
-/* Đảm bảo ô nhập không thay đổi kích thước khi chọn nhiều */
 .custom-select-container {
     width: 100%;
     position: relative;
   
-    /* Giữ input không bị thay đổi kích thước */
-    .react-select__control {
-      min-height: 40px;
-      display: flex;
-      flex-wrap: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-      border-radius: 8px;
-    }
-  
-    /* Ẩn bớt phần bên trái nếu chọn quá nhiều */
-    .react-select__value-container {
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-      border-radius: 8px;
-    }
-  
-    /* Điều chỉnh danh sách tùy chọn */
-    .react-select__option {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 8px 12px;
-      cursor: pointer;
-      border-radius: 8px;
-  
-      input[type="checkbox"] {
-        margin-left: auto;
-        width: 16px;
-        height: 16px;
-        accent-color: #006600;
+    .custom-select {
+      .react-select__control {
+        min-height: 40px;
+        display: flex;
+        flex-wrap: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        border-radius: 8px;
       }
   
-      &:hover {
-        background-color: #f0f0f0;
-        border-radius: 8px; /* Bo tròn góc khi hover */
+      .react-select__value-container {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+  
+      .react-select__option {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 8px 12px;
+        border-radius: 8px;
+  
+        &:hover {
+          background-color: #f0f0f0;
+        }
+  
+        input[type="checkbox"] {
+          margin-left: auto;
+          width: 16px;
+          height: 16px;
+          accent-color: #006600;
+        }
       }
     }
   }
-  .react-select__control {
-    text-overflow: unset; /* Bỏ qua các dấu chấm dọc */
-    overflow: hidden; /* Ẩn phần thừa */
-    white-space: nowrap; /* Ngăn ngắt dòng */
-  }
+  

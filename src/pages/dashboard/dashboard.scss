@@ -332,15 +332,13 @@ tr:hover {
 
 /* Mỗi bảng chiếm 50% (chia đều) */
 .table-container {
-  flex: 1;
-  overflow-x: auto;
-  border-radius: 2px;
-  border: 1px solid #ddd;
-  background-color: #fafafa;
-  padding: 8px;
-  overflow: auto;
-  scrollbar-width: none; /* Firefox */
-  font-size: 13px;
+    flex: 1;
+    overflow-x: auto;
+    border: none;
+    background-color: transparent;
+    padding: 0;
+    scrollbar-width: none;
+    font-size: 13px;
 }
 
 .table-container::-webkit-scrollbar {
@@ -404,3 +402,20 @@ tr:hover {
   text-overflow: unset;  /* Loại bỏ dấu chấm dọc */
   white-space: normal;  /* Cho phép văn bản xuống dòng nếu cần */
 }
+.header-with-total {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+  }
+  
+  .section-title {
+    font-size: 18px;
+    font-weight: bold;
+  }
+  
+  .total-count {
+    font-weight: bold;
+    color: #333;
+    font-size: 16px;
+  }
