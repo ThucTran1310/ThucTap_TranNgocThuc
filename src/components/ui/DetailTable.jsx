@@ -15,8 +15,9 @@ const DetailTable = () => {
             viTri: "Staff",
             nghiepVu: "Nhân viên mỹ phẩm",
             nhomChat: "Đổi tên nhóm",
-            noiDung: "https://testchat.hasaki.vn/chat/...",
+            noiDung: "https://testchat.hasaki.vn/chat/1...",
             tenNguoiGui: "Văn Thành Phúc",
+            emailNguoiGui: "phuc@hasaki.vn",
             ngayGui: "27/03/25 11:50",
         },
         {
@@ -27,46 +28,12 @@ const DetailTable = () => {
             viTri: "Staff",
             nghiepVu: "Nhân viên mỹ phẩm",
             nhomChat: "GROUP TEST",
-            noiDung: "https://testchat.hasaki.vn/chat/...",
+            noiDung: "https://testchat.hasaki.vn/chat/2...",
             tenNguoiGui: "Văn Thành Phúc",
+            emailNguoiGui: "phuc@hasaki.vn",
             ngayGui: "27/03/25 11:23",
         },
-        {
-            id: 2,
-            maNv: "221817",
-            hoTen: "Mai Yến Nhi",
-            boPhan: "COSMETICS",
-            viTri: "Staff",
-            nghiepVu: "Nhân viên mỹ phẩm",
-            nhomChat: "GROUP TEST",
-            noiDung: "https://testchat.hasaki.vn/chat/...",
-            tenNguoiGui: "Văn Thành Phúc",
-            ngayGui: "27/03/25 11:23",
-        },
-        {
-            id: 2,
-            maNv: "221817",
-            hoTen: "Mai Yến Nhi",
-            boPhan: "COSMETICS",
-            viTri: "Staff",
-            nghiepVu: "Nhân viên mỹ phẩm",
-            nhomChat: "GROUP TEST",
-            noiDung: "https://testchat.hasaki.vn/chat/...",
-            tenNguoiGui: "Văn Thành Phúc",
-            ngayGui: "27/03/25 11:23",
-        },
-        {
-            id: 2,
-            maNv: "221817",
-            hoTen: "Mai Yến Nhi",
-            boPhan: "COSMETICS",
-            viTri: "Staff",
-            nghiepVu: "Nhân viên mỹ phẩm",
-            nhomChat: "GROUP TEST",
-            noiDung: "https://testchat.hasaki.vn/chat/...",
-            tenNguoiGui: "Văn Thành Phúc",
-            ngayGui: "27/03/25 11:23",
-        },
+        // Thêm dữ liệu giả lập khác nếu cần
     ];
 
     return (
@@ -93,12 +60,13 @@ const DetailTable = () => {
                                 <TableCell>Nhóm chat</TableCell>
                                 <TableCell>Nội dung tin nhắn</TableCell>
                                 <TableCell>Tên người gửi</TableCell>
+                                <TableCell>Email người gửi</TableCell>
                                 <TableCell>Ngày gửi</TableCell>
                             </TableRow>
                         </TableHead>
                         <TableBody>
                             {data.map((item, index) => (
-                                <TableRow key={item.id}>
+                                <TableRow key={`${item.id}-${index}`}>
                                     <TableCell>{index + 1}</TableCell>
                                     <TableCell>{item.maNv}</TableCell>
                                     <TableCell>{item.hoTen}</TableCell>
@@ -106,8 +74,9 @@ const DetailTable = () => {
                                     <TableCell>{item.viTri}</TableCell>
                                     <TableCell>{item.nghiepVu}</TableCell>
                                     <TableCell>{item.nhomChat}</TableCell>
-                                    <TableCell>{item.noiDung}</TableCell>
+                                    <TableCell>{item.noiDung.length > 20 ? item.noiDung.slice(0, 20) + "..." : item.noiDung}</TableCell>
                                     <TableCell>{item.tenNguoiGui}</TableCell>
+                                    <TableCell>{item.emailNguoiGui}</TableCell>
                                     <TableCell>{item.ngayGui}</TableCell>
                                 </TableRow>
                             ))}
@@ -116,12 +85,10 @@ const DetailTable = () => {
 
                     {/* Footer */}
                     <div className="table-footer flex justify-between items-center mt-4 px-2">
-                        {/* Nút Ẩn bớt */}
                         <button onClick={() => setShowTable(false)} className="hide-button">
                             Ẩn bớt
                         </button>
 
-                        {/* Pagination */}
                         <div className="pending-dashboard__content__paging flex items-center gap-2">
                             <span onClick={() => page > 1 && setPage(page - 1)} className="cursor-pointer hover:opacity-80">
                                 <svg className="w-6 h-6 text-gray-700" viewBox="0 0 24 24" fill="currentColor">

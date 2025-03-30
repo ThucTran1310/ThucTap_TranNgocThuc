@@ -126,6 +126,8 @@ export default function DashBoard() {
         3: ["Lê Minh Tâm - 42"],
         4: ["Trần Bảo Châu - 7"],
     };
+
+
     const employees = [
         { id: 1, name: "Trần Ngọc Thức", department: "COSMETICS", location: "176 Nguyễn Văn Cừ", count: 27 },
         { id: 2, name: "Trần Ngọc Thức", department: "COSMETICS", location: "176 Nguyễn Văn Cừ", count: 27 },
@@ -183,76 +185,62 @@ export default function DashBoard() {
                             <h3 className="section-title">Số lượng chờ xử lý theo bộ phận/nghiệp vụ</h3>
                             <div className="total-count">Tổng: {data.reduce((sum, row) => sum + row.count, 0)}</div>
                         </div>
-                        <div className="tables-wrapper grid grid-cols-1 gap-4">
-                            <Table className="bg-white rounded-lg shadow">
-                                {/* Bộ phận */}
-                                <TableHead>
-                                    <TableRow className="bg-green-100">
-                                        <TableCell>Bộ phận</TableCell>
-                                        <TableCell>Số lượng</TableCell>
-                                    </TableRow>
-                                </TableHead>
-                                <TableBody>
-                                    {data.map((row) => (
-                                        <TableRow
-                                            key={row.id}
-                                            className="cursor-pointer hover:bg-gray-100"
-                                            onClick={() => setSelectedRow(selectedRow === row.id ? null : row.id)}
-                                        >
-                                            <TableCell>{row.department}</TableCell>
-                                            <TableCell>{row.count}</TableCell>
+                        <div className="tables-wrapper">
+                            <div className="table-container">
+                                <Table>
+                                    <TableHead>
+                                        <TableRow className="bg-green-100">
+                                            <TableCell>Bộ phận</TableCell>
+                                            <TableCell>Số lượng</TableCell>
                                         </TableRow>
-                                    ))}
-                                </TableBody>
-                            </Table>
-
-                            <Table className="bg-white rounded-lg shadow">
-                                {/* Nghiệp vụ */}
-                                <TableHead>
-                                    <TableRow className="bg-green-100">
-                                        <TableCell>Nghiệp vụ</TableCell>
-                                        <TableCell>Số lượng</TableCell>
-                                    </TableRow>
-                                </TableHead>
-                                <TableBody>
-                                    {data.map((row) => (
-                                        <TableRow
-                                            key={row.id}
-                                            className="cursor-pointer hover:bg-gray-100"
-                                            onClick={() => setSelectedRow(selectedRow === row.id ? null : row.id)}
-                                        >
-                                            <TableCell>{row.service}</TableCell>
-                                            <TableCell>{row.count}</TableCell>
+                                    </TableHead>
+                                    <TableBody>
+                                        {data.map((row) => (
+                                            <TableRow key={row.id} className="cursor-pointer hover:bg-gray-100" onClick={() => setSelectedRow(selectedRow === row.id ? null : row.id)}>
+                                                <TableCell>{row.department}</TableCell>
+                                                <TableCell>{row.count}</TableCell>
+                                            </TableRow>
+                                        ))}
+                                    </TableBody>
+                                </Table>
+                            </div>
+                            <div className="table-container">
+                                <Table>
+                                    <TableHead>
+                                        <TableRow className="bg-green-100">
+                                            <TableCell>Nghiệp vụ</TableCell>
+                                            <TableCell>Số lượng</TableCell>
                                         </TableRow>
-                                    ))}
-                                </TableBody>
-                            </Table>
-
-                            <Table className="bg-white rounded-lg shadow">
-                                {/* Nhân viên */}
-                                <TableHead>
-                                    <TableRow className="bg-green-100">
-                                        <TableCell>NV có nhiều tin nhắn CXL nhất</TableCell>
-                                        <TableCell>Số lượng</TableCell>
-                                    </TableRow>
-                                </TableHead>
-                                <TableBody>
-                                    {employees.map((employee) => (
-                                        <TableRow
-                                            key={employee.id}
-                                            className="cursor-pointer hover:bg-gray-100"
-                                            onClick={() => setSelectedRow(selectedRow === employee.id ? null : employee.id)}
-                                        >
-                                            <TableCell>
-                                                {employee.name} - {employee.department} - {employee.location}
-                                            </TableCell>
-                                            <TableCell>{employee.count}</TableCell>
+                                    </TableHead>
+                                    <TableBody>
+                                        {data.map((row) => (
+                                            <TableRow key={row.id} className="cursor-pointer hover:bg-gray-100" onClick={() => setSelectedRow(selectedRow === row.id ? null : row.id)}>
+                                                <TableCell>{row.service}</TableCell>
+                                                <TableCell>{row.count}</TableCell>
+                                            </TableRow>
+                                        ))}
+                                    </TableBody>
+                                </Table>
+                            </div>
+                            <div className="table-container">
+                                <Table>
+                                    <TableHead>
+                                        <TableRow className="bg-green-100">
+                                            <TableCell>NV có nhiều tin nhắn CXL nhất</TableCell>
+                                            <TableCell>Số lượng</TableCell>
                                         </TableRow>
-                                    ))}
-                                </TableBody>
-                            </Table>
+                                    </TableHead>
+                                    <TableBody>
+                                        {employees.map((employee) => (
+                                            <TableRow key={employee.id} className="cursor-pointer hover:bg-gray-100" onClick={() => setSelectedRow(selectedRow === employee.id ? null : employee.id)}>
+                                                <TableCell>{employee.name} - {employee.department} - {employee.location}</TableCell>
+                                                <TableCell>{employee.count}</TableCell>
+                                            </TableRow>
+                                        ))}
+                                    </TableBody>
+                                </Table>
+                            </div>
                         </div>
-
                         {selectedRow && (
                             <div className="details-section mt-4 p-4 border rounded bg-gray-50">
                                 <h2 className="text-lg font-bold mb-2">Nhân viên có nhiều tin nhắn CXL nhất</h2>
