@@ -57,7 +57,7 @@ button:hover {
 }
 
 /* Grid container */
-.gird-container {
+.grid-container {
   max-width: 90%;
 }
 
@@ -377,26 +377,26 @@ tr:hover {
   align-items: center;
   justify-content: flex-end;
   gap: 12px;
-  margin-top: 16px;
-
-  svg {
-    width: 24px;
-    height: 24px;
-    fill: #444;
-    cursor: pointer;
-    transition: 0.2s;
-  }
-
-  svg:hover {
-    fill: #111;
-  }
-
-  &__number {
-    font-weight: bold;
-    font-size: 14px;
-    color: #222;
-  }
 }
+
+.pending-dashboard__content__paging svg {
+  width: 24px;
+  height: 24px;
+  fill: #444;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.pending-dashboard__content__paging svg:hover {
+  fill: #111;
+}
+
+.pending-dashboard__content__paging__number {
+  font-weight: bold;
+  font-size: 14px;
+  color: #222;
+}
+
 .d-flex {
   display: flex;
 }
@@ -416,65 +416,27 @@ tr:hover {
   cursor: pointer;
 }
 
-.pending-dashboard__content__paging {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-
-  svg {
-    width: 24px;
-    height: 24px;
-    fill: #444;
-    cursor: pointer;
-    transition: 0.2s;
-  }
-
-  svg:hover {
-    fill: #111;
-  }
-
-  &__number {
-    font-size: 14px;
-    font-weight: bold;
-    margin: 0 8px;
-    color: #222;
-  }
+.pending-dashboard__content__less-button:hover {
+  text-decoration: underline;
 }
+
 .ant-style-header {
   background-color: #e6f4ff !important;
-
-  th,
-  td {
-    background-color: #e6f4ff !important;
-    color: #1e293b !important;
-    font-weight: 600;
-    font-size: 13.5px;
-    text-align: center !important;
-    border-bottom: 1px solid #d9d9d9;
-    white-space: nowrap;
-  }
-
-  &:hover {
-    background-color: #e6f4ff !important;
-  }
 }
-.ant-style-header {
+
+.ant-style-header th,
+.ant-style-header td {
   background-color: #e6f4ff !important;
+  color: #1e293b !important;
+  font-weight: 600;
+  font-size: 13.5px;
+  text-align: center !important;
+  border-bottom: 1px solid #d9d9d9;
+  white-space: nowrap;
+}
 
-  th,
-  td {
-    background-color: #e6f4ff !important;
-    color: #1e293b !important;
-    font-weight: 600;
-    font-size: 13.5px;
-    text-align: center !important;
-    border-bottom: 1px solid #d9d9d9;
-    white-space: nowrap;
-  }
-
-  &:hover {
-    background-color: #e6f4ff !important;
-  }
+.ant-style-header:hover {
+  background-color: #e6f4ff !important;
 }
 
 .hide-button {
@@ -483,10 +445,10 @@ tr:hover {
   cursor: pointer;
   transition: color 0.3s;
   white-space: nowrap;
+}
 
-  &:hover {
-    text-decoration: underline;
-  }
+.hide-button:hover {
+  text-decoration: underline;
 }
 
 .table-footer {
@@ -495,21 +457,24 @@ tr:hover {
   align-items: center;
   margin-top: 16px;
 }
-.ant-style-header {
-  background-color: #e6f4ff !important;
 
-  th,
-  td {
-    background-color: #e6f4ff !important;
-    color: #1e293b !important;
-    font-weight: 600;
-    font-size: 13.5px;
-    text-align: center !important;
-    border-bottom: 1px solid #d9d9d9;
-    white-space: nowrap;
-  }
+/* Scrollbar tổng thể */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
 
-  &:hover {
-    background-color: #e6f4ff !important;
-  }
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #a0aec0;
+  border-radius: 10px;
+  transition: background 0.3s ease;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #718096;
 }

@@ -84,17 +84,16 @@ export default function DashBoard() {
     ];
 
     const jobOptions = [
-        { value: "CSKH", label: "CSKH" },
-        { value: "Cosmetic", label: "Cosmetic" },
-        { value: "Đào tạo", label: "Đào tạo" },
-        { value: "Quản lý cửa hàng", label: "Quản lý cửa hàng" },
-        { value: "Bảo vệ", label: "Bảo vệ" },
-        { value: "Đóng gói", label: "Đóng gói" },
-        { value: "Tư vấn Clinic", label: "Tư vấn Clinic" },
-        { value: "BOM", label: "BOM" },
-        { value: "Giao hàng nhanh", label: "Giao hàng nhanh" },
+        { value: "Kế toán", label: "Kế toán" },
+        { value: "Lễ tân", label: "Lễ tân" },
+        { value: "Bác sĩ Da liễu", label: "Bác sĩ Da liễu" },
+        { value: "Chăm sóc da", label: "Chăm sóc da" },
+        { value: "Nhân sự", label: "Nhân sự" },
+        { value: "Marketing Online", label: "Marketing Online" },
+        { value: "Quản lý chi nhánh", label: "Quản lý chi nhánh" },
+        { value: "Thiết kế đồ họa", label: "Thiết kế đồ họa" },
+        { value: "Lập trình viên", label: "Lập trình viên" },
     ];
-
     const positionOptions = [
         { value: "Specialist", label: "Specialist" },
         { value: "Assistant Supervisor", label: "Assistant Supervisor" },
@@ -107,32 +106,34 @@ export default function DashBoard() {
     ];
 
     const workplaceOptions = [
-        { value: "123 an khánh", label: "123 An Khánh" },
-        { value: "234 bình thủy", label: "234 Bình Thủy" },
-        { value: "456 cái răng", label: "456 Cái Răng" },
-        { value: "789 thốt nốt", label: "789 Thốt Nốt" },
-        { value: "999 cờ đỏ", label: "999 Cờ Đỏ" },
+        { value: "101 Lê Lợi", label: "101 Lê Lợi" },
+        { value: "202 Nguyễn Trãi", label: "202 Nguyễn Trãi" },
+        { value: "303 Trần Hưng Đạo", label: "303 Trần Hưng Đạo" },
+        { value: "404 Hai Bà Trưng", label: "404 Hai Bà Trưng" },
+        { value: "505 Cách Mạng Tháng 8", label: "505 Cách Mạng Tháng 8" },
     ];
 
     const data = [
-        { id: 1, department: "LOGISTICS", count: 3177, service: "Giao hàng nhanh" },
-        { id: 2, department: "TECH", count: 9, service: "CSKH Cosmetic" },
-        { id: 3, department: "SPA", count: 3, service: "Bác sĩ" },
-        { id: 4, department: "SPA", count: 1, service: "CSKH Spa" },
+        { id: 1, department: "MARKETING", count: 452, service: "Quảng cáo Facebook" },
+        { id: 2, department: "SALES", count: 128, service: "Tư vấn khách hàng" },
+        { id: 3, department: "HR", count: 64, service: "Phỏng vấn ứng viên" },
+        { id: 4, department: "IT", count: 23, service: "Bảo trì hệ thống" },
     ];
 
     const details = {
-        1: ["Nguyễn Văn A - 20", "Trần Thị B - 15"],
-        2: ["Phạm Văn C - 10"],
-        3: ["Lê Thị D - 5"],
-        4: ["Hoàng Văn E - 2"],
+        1: ["Phạm Minh Hùng - 150", "Nguyễn Thị Lan - 95"],
+        2: ["Võ Quốc Khánh - 18"],
+        3: ["Lê Minh Tâm - 42"],
+        4: ["Trần Bảo Châu - 7"],
     };
-
     const employees = [
-        { id: 1, name: "Nguyễn Thị Luyện", department: "COSMETICS", location: "176 Phan Đăng Lưu", count: 27 },
-        { id: 2, name: "Mai Yến Nhi", department: "COSMETICS", location: "447 Phan Văn Trị", count: 22 },
-        { id: 3, name: "BOD Test 1", department: "BOD", location: "", count: 15 },
-        { id: 4, name: "Nguyễn Văn Tính", department: "COSMETICS", location: "555 3 tháng 2", count: 10 },
+        { id: 1, name: "Trần Ngọc Thức", department: "COSMETICS", location: "176 Nguyễn Văn Cừ", count: 27 },
+        { id: 2, name: "Trần Ngọc Thức", department: "COSMETICS", location: "176 Nguyễn Văn Cừ", count: 27 },
+        { id: 3, name: "Trần Ngọc Thức", department: "COSMETICS", location: "176 Nguyễn Văn Cừ", count: 27 },
+        { id: 4, name: "Trần Ngọc Thức", department: "COSMETICS", location: "176 Nguyễn Văn Cừ", count: 27 },
+        { id: 5, name: "Trần Ngọc Thức", department: "COSMETICS", location: "176 Nguyễn Văn Cừ", count: 27 },
+        { id: 6, name: "Trần Ngọc Thức", department: "COSMETICS", location: "176 Nguyễn Văn Cừ", count: 27 },
+        { id: 7, name: "Trần Ngọc Thức", department: "COSMETICS", location: "176 Nguyễn Văn Cừ", count: 27 },
     ];
 
     return (
@@ -182,62 +183,76 @@ export default function DashBoard() {
                             <h3 className="section-title">Số lượng chờ xử lý theo bộ phận/nghiệp vụ</h3>
                             <div className="total-count">Tổng: {data.reduce((sum, row) => sum + row.count, 0)}</div>
                         </div>
-                        <div className="tables-wrapper">
-                            <div className="table-container">
-                                <Table>
-                                    <TableHead>
-                                        <TableRow className="bg-green-100">
-                                            <TableCell>Bộ phận</TableCell>
-                                            <TableCell>Số lượng</TableCell>
+                        <div className="tables-wrapper grid grid-cols-1 gap-4">
+                            <Table className="bg-white rounded-lg shadow">
+                                {/* Bộ phận */}
+                                <TableHead>
+                                    <TableRow className="bg-green-100">
+                                        <TableCell>Bộ phận</TableCell>
+                                        <TableCell>Số lượng</TableCell>
+                                    </TableRow>
+                                </TableHead>
+                                <TableBody>
+                                    {data.map((row) => (
+                                        <TableRow
+                                            key={row.id}
+                                            className="cursor-pointer hover:bg-gray-100"
+                                            onClick={() => setSelectedRow(selectedRow === row.id ? null : row.id)}
+                                        >
+                                            <TableCell>{row.department}</TableCell>
+                                            <TableCell>{row.count}</TableCell>
                                         </TableRow>
-                                    </TableHead>
-                                    <TableBody>
-                                        {data.map((row) => (
-                                            <TableRow key={row.id} className="cursor-pointer hover:bg-gray-100" onClick={() => setSelectedRow(selectedRow === row.id ? null : row.id)}>
-                                                <TableCell>{row.department}</TableCell>
-                                                <TableCell>{row.count}</TableCell>
-                                            </TableRow>
-                                        ))}
-                                    </TableBody>
-                                </Table>
-                            </div>
-                            <div className="table-container">
-                                <Table>
-                                    <TableHead>
-                                        <TableRow className="bg-green-100">
-                                            <TableCell>Nghiệp vụ</TableCell>
-                                            <TableCell>Số lượng</TableCell>
+                                    ))}
+                                </TableBody>
+                            </Table>
+
+                            <Table className="bg-white rounded-lg shadow">
+                                {/* Nghiệp vụ */}
+                                <TableHead>
+                                    <TableRow className="bg-green-100">
+                                        <TableCell>Nghiệp vụ</TableCell>
+                                        <TableCell>Số lượng</TableCell>
+                                    </TableRow>
+                                </TableHead>
+                                <TableBody>
+                                    {data.map((row) => (
+                                        <TableRow
+                                            key={row.id}
+                                            className="cursor-pointer hover:bg-gray-100"
+                                            onClick={() => setSelectedRow(selectedRow === row.id ? null : row.id)}
+                                        >
+                                            <TableCell>{row.service}</TableCell>
+                                            <TableCell>{row.count}</TableCell>
                                         </TableRow>
-                                    </TableHead>
-                                    <TableBody>
-                                        {data.map((row) => (
-                                            <TableRow key={row.id} className="cursor-pointer hover:bg-gray-100" onClick={() => setSelectedRow(selectedRow === row.id ? null : row.id)}>
-                                                <TableCell>{row.service}</TableCell>
-                                                <TableCell>{row.count}</TableCell>
-                                            </TableRow>
-                                        ))}
-                                    </TableBody>
-                                </Table>
-                            </div>
-                            <div className="table-container">
-                                <Table>
-                                    <TableHead>
-                                        <TableRow className="bg-green-100">
-                                            <TableCell>NV có nhiều tin nhắn CXL nhất</TableCell>
-                                            <TableCell>Số lượng</TableCell>
+                                    ))}
+                                </TableBody>
+                            </Table>
+
+                            <Table className="bg-white rounded-lg shadow">
+                                {/* Nhân viên */}
+                                <TableHead>
+                                    <TableRow className="bg-green-100">
+                                        <TableCell>NV có nhiều tin nhắn CXL nhất</TableCell>
+                                        <TableCell>Số lượng</TableCell>
+                                    </TableRow>
+                                </TableHead>
+                                <TableBody>
+                                    {employees.map((employee) => (
+                                        <TableRow
+                                            key={employee.id}
+                                            className="cursor-pointer hover:bg-gray-100"
+                                            onClick={() => setSelectedRow(selectedRow === employee.id ? null : employee.id)}
+                                        >
+                                            <TableCell>
+                                                {employee.name} - {employee.department} - {employee.location}
+                                            </TableCell>
+                                            <TableCell>{employee.count}</TableCell>
                                         </TableRow>
-                                    </TableHead>
-                                    <TableBody>
-                                        {employees.map((employee) => (
-                                            <TableRow key={employee.id} className="cursor-pointer hover:bg-gray-100" onClick={() => setSelectedRow(selectedRow === employee.id ? null : employee.id)}>
-                                                <TableCell>{employee.name} - {employee.department} - {employee.location}</TableCell>
-                                                <TableCell>{employee.count}</TableCell>
-                                            </TableRow>
-                                        ))}
-                                    </TableBody>
-                                </Table>
-                            </div>
+                                    ))}
+                                </TableBody>
+                            </Table>
                         </div>
+
                         {selectedRow && (
                             <div className="details-section mt-4 p-4 border rounded bg-gray-50">
                                 <h2 className="text-lg font-bold mb-2">Nhân viên có nhiều tin nhắn CXL nhất</h2>
