@@ -1,36 +1,55 @@
 import { useState } from "react";
 import { Table, TableHead, TableRow, TableCell, TableBody } from "@/components/ui/table";
 import "@/pages/dashboard/dashboard.scss";
-import { Pagination } from "@mui/material"; // Chỉ import Pagination từ Material UI
 
 const DetailTable = () => {
     const [showTable, setShowTable] = useState(false);
     const [page, setPage] = useState(1);
 
-    const handlePageChange = (event, value) => {
-        setPage(value); // Cập nhật trang khi nhấn nút
-    };
+    const data = [
+        {
+            id: 1,
+            maNv: "18147",
+            hoTen: "Nguyễn Văn Tính",
+            boPhan: "COSMETICS",
+            viTri: "Staff",
+            nghiepVu: "Nhân viên mỹ phẩm",
+            nhomChat: "Đổi tên nhóm",
+            noiDung: "https://testchat.hasaki.vn/chat/...",
+            tenNguoiGui: "Văn Thành Phúc",
+            ngayGui: "27/03/25 11:50",
+        },
+        {
+            id: 2,
+            maNv: "221817",
+            hoTen: "Mai Yến Nhi",
+            boPhan: "COSMETICS",
+            viTri: "Staff",
+            nghiepVu: "Nhân viên mỹ phẩm",
+            nhomChat: "GROUP TEST",
+            noiDung: "https://testchat.hasaki.vn/chat/...",
+            tenNguoiGui: "Văn Thành Phúc",
+            ngayGui: "27/03/25 11:23",
+        },
+    ];
 
     return (
         <div>
-            {/*hiển thị Xem chi tiết*/}
             {!showTable && (
-                <div className="button-container">
-                    <button
-                        onClick={() => setShowTable(true)}
-                        className="bg-blue-500 text-white px-4 py-2 rounded mb-4"
-                    >
+                <div className="button-container text-center my-4">
+                    <button onClick={() => setShowTable(true)} className="bg-pink-500 text-white px-4 py-2 rounded font-semibold">
                         Xem chi tiết
                     </button>
                 </div>
             )}
 
-            {/*Hiển thị bảng*/}
             {showTable && (
                 <div className="content-wrapper">
                     <Table>
                         <TableHead>
-                            <TableRow className="bg-green-100">
+                            <TableRow className="bg-[#d1fae5] text-[#1e293b] font-semibold text-[13.5px] text-center">
+                                <TableCell>#</TableCell>
+                                <TableCell>Mã NV</TableCell>
                                 <TableCell>Họ tên</TableCell>
                                 <TableCell>Bộ phận</TableCell>
                                 <TableCell>Vị trí</TableCell>
@@ -42,41 +61,49 @@ const DetailTable = () => {
                             </TableRow>
                         </TableHead>
                         <TableBody>
-                            <TableRow>
-                                <TableCell>Nguyễn Văn A</TableCell>
-                                <TableCell>IT</TableCell>
-                                <TableCell>Developer</TableCell>
-                                <TableCell>Code</TableCell>
-                                <TableCell>Chat Group 1</TableCell>
-                                <TableCell>Xin chào</TableCell>
-                                <TableCell>Admin</TableCell>
-                                <TableCell>2025-03-28</TableCell>
-                            </TableRow>
+                            {data.map((item, index) => (
+                                <TableRow key={item.id}>
+                                    <TableCell>{index + 1}</TableCell>
+                                    <TableCell>{item.maNv}</TableCell>
+                                    <TableCell>{item.hoTen}</TableCell>
+                                    <TableCell>{item.boPhan}</TableCell>
+                                    <TableCell>{item.viTri}</TableCell>
+                                    <TableCell>{item.nghiepVu}</TableCell>
+                                    <TableCell>{item.nhomChat}</TableCell>
+                                    <TableCell>{item.noiDung}</TableCell>
+                                    <TableCell>{item.tenNguoiGui}</TableCell>
+                                    <TableCell>{item.ngayGui}</TableCell>
+                                </TableRow>
+                            ))}
                         </TableBody>
                     </Table>
-                    {/* Pagination (Điều hướng qua các trang) */}
-                    <div style={{ display: "flex", justifyContent: "center", alignItems: "center", marginTop: 20 }}>
-                        <Pagination
-                            count={2} // Số trang bạn muốn (có thể thay đổi)
-                            page={page}
-                            onChange={handlePageChange} // Thực hiện thay đổi trang
-                            shape="rounded" // Đặt dạng hình tròn cho các nút
-                            color="primary" // Màu sắc của Pagination
-                        />
-                    </div>
-                    {/*Ẩn chi tiết*/}
-                    <div className="hide-button">
-                        <button
-                            onClick={() => setShowTable(false)}
-                            className="bg-red-500"
-                        >
-                            Ẩn chi tiết
+
+                    {/* Footer */}
+                    <div className="table-footer flex justify-between items-center mt-4 px-2">
+                        {/* Nút Ẩn bớt */}
+                        <button onClick={() => setShowTable(false)} className="hide-button">
+                            Ẩn bớt
                         </button>
+
+                        {/* Pagination */}
+                        <div className="pending-dashboard__content__paging flex items-center gap-2">
+                            <span onClick={() => page > 1 && setPage(page - 1)} className="cursor-pointer hover:opacity-80">
+                                <svg className="w-6 h-6 text-gray-700" viewBox="0 0 24 24" fill="currentColor">
+                                    <path d="M17.59 18 19 16.59 14.42 12 19 7.41 17.59 6l-6 6z" />
+                                    <path d="m11 18 1.41-1.41L7.83 12l4.58-4.59L11 6l-6 6z" />
+                                </svg>
+                            </span>
+                            <span className="pending-dashboard__content__paging__number font-semibold text-sm text-gray-800">{page}</span>
+                            <span onClick={() => setPage(page + 1)} className="cursor-pointer hover:opacity-80">
+                                <svg className="w-6 h-6 text-gray-700" viewBox="0 0 24 24" fill="currentColor">
+                                    <path d="M6.41 6 5 7.41 9.58 12 5 16.59 6.41 18l6-6z" />
+                                    <path d="m13 6-1.41 1.41L16.17 12l-4.58 4.59L13 18l6-6z" />
+                                </svg>
+                            </span>
+                        </div>
                     </div>
                 </div>
             )}
-
-
         </div>
     );
 };

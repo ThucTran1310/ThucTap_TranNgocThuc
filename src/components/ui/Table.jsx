@@ -1,17 +1,55 @@
-import React from "react";
+import React, { useContext, createContext } from "react";
 
-export const Table = ({ children }) => (
-    <table className="w-full border-collapse border border-gray-300">{children}</table>
+const TableContext = createContext({ isHead: false });
+
+// Table
+export const Table = ({ children, className = "", style = {} }) => (
+    <table className={`w-full border-collapse border border-gray-300 ${className}`} style={style}>
+        {children}
+    </table>
 );
 
-export const TableHead = ({ children }) => (
-    <thead className="bg-gray-200 font-bold">{children}</thead>
+// TableHead
+export const TableHead = ({ children, className = "", style = {} }) => (
+    <TableContext.Provider value={{ isHead: true }}>
+        <thead className={className} style={style}>
+            {children}
+        </thead>
+    </TableContext.Provider>
 );
 
-export const TableRow = ({ children }) => <tr className="border-b">{children}</tr>;
+// TableBody
+export const TableBody = ({ children, className = "", style = {} }) => (
+    <TableContext.Provider value={{ isHead: false }}>
+        <tbody className={className} style={style}>
+            {children}
+        </tbody>
+    </TableContext.Provider>
+);
 
-export const TableCell = ({ children }) => <td className="p-2 border">{children}</td>;
+// TableRow
+export const TableRow = ({ children, className = "" }) => (
+    <tr className={`border-b ${className}`}>{children}</tr>
+);
 
-export const TableBody = ({ children }) => <tbody>{children}</tbody>;
+// TableCell
+export const TableCell = ({ children, className = "", style = {} }) => {
+    const { isHead } = useContext(TableContext);
+    const baseClass = `p-2 border ${className}`;
+
+    if (isHead) {
+        return (
+            <th className={baseClass} style={style}>
+                {children}
+            </th>
+        );
+    }
+
+    return (
+        <td className={baseClass} style={style}>
+            {children}
+        </td>
+    );
+};
 
 export default Table;
