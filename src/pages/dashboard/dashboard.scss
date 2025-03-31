@@ -478,3 +478,14 @@ tr:hover {
 ::-webkit-scrollbar-thumb:hover {
   background: #718096;
 }
+.hide-button {
+  background: none;
+  border: none;
+  padding: 0;
+  margin: 0;
+  font-size: 14px; /* hoặc giống với style chữ bạn muốn */
+  color: #28a745; /* màu xanh giống chữ, có thể chỉnh lại theo ảnh */
+  font-weight: 500;
+  cursor: pointer;
+  text-decoration: underline; /* tùy chọn nếu bạn muốn giống link */
+}
