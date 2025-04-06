@@ -1,0 +1,42 @@
+.custom-select-container {
+    width: 100%;
+    position: relative;
+  
+    .custom-select {
+      .react-select__control {
+        min-height: 40px;
+        display: flex;
+        flex-wrap: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        border-radius: 8px;
+      }
+  
+      .react-select__value-container {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+  
+      .react-select__option {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 8px 12px;
+        border-radius: 8px;
+  
+        &:hover {
+          background-color: #f0f0f0;
+        }
+  
+        input[type="checkbox"] {
+          margin-left: auto;
+          width: 16px;
+          height: 16px;
+          accent-color: #006600;
+        }
+      }
+    }
+  }
+  

@@ -1,0 +1,92 @@
+// @mui
+import Stack from '@mui/material/Stack';
+import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
+import { AppBar as MuiAppBar, styled } from '@mui/material';
+import Toolbar from '@mui/material/Toolbar';
+import MenuIcon from '@mui/icons-material/Menu';
+
+// hooks
+//
+import { HEADER, NAV } from '../config-layout';
+import { IconButton } from '@mui/material';
+import React from 'react';
+import { pxToRem } from '@/theme/typography.js';
+
+const ICON_SIZE = 20;
+
+const AppBar = styled(MuiAppBar, {
+  shouldForwardProp: (prop) => prop !== 'open',
+})(({ theme }) => ({
+  height: HEADER.H_DESKTOP,
+  zIndex: theme.zIndex.drawer + 1,
+  boxShadow: '0 1px 4px 0 rgba(0, 0, 0, .16)',
+  marginLeft: NAV.W_VERTICAL,
+  width: `calc(100% - ${NAV.W_VERTICAL}px)`,
+  backgroundColor: theme.palette.background.paper,
+  transition: theme.transitions.create(['width', 'margin'], {
+    easing: theme.transitions.easing.sharp,
+    duration: theme.transitions.duration.leavingScreen,
+  }),
+  variants: [
+    {
+      props: ({ open }) => open,
+      style: {
+        marginLeft: NAV.W_VERTICAL_FULL,
+        width: `calc(100% - ${NAV.W_VERTICAL_FULL}px)`,
+        transition: theme.transitions.create(['width', 'margin'], {
+          easing: theme.transitions.easing.sharp,
+          duration: theme.transitions.duration.enteringScreen,
+        }),
+      },
+    },
+  ],
+}));
+
+// ----------------------------------------------------------------------
+
+export default function Header({ onToggleNav, open }) {
+  const renderContent = (
+    <>
+      <Stack
+        flexGrow={1}
+        direction="row"
+        alignItems="center"
+        justifyContent="flex-start"
+        spacing={{ xs: 0.5, sm: 1 }}
+      >
+        <IconButton
+          aria-label="open drawer"
+          edge="start"
+          sx={{
+            '&:focus': {
+              outline: 'none',
+            },
+          }}
+          onClick={onToggleNav}
+        >
+          {open ? (
+            <ArrowBackIosIcon color="primary" sx={{ fontSize: 20 }} />
+          ) : (
+            <MenuIcon color="primary" sx={{ fontSize: 20 }} />
+          )}
+        </IconButton>
+      </Stack>
+    </>
+  );
+
+  return (
+    <AppBar position={'fixed'} open={open} sx={{}}>
+      <Toolbar
+        sx={{
+          height: 1,
+        }}
+        style={{
+          paddingLeft: 16,
+          minHeight: pxToRem(HEADER.H_DESKTOP),
+        }}
+      >
+        {renderContent}
+      </Toolbar>
+    </AppBar>
+  );
+}

@@ -1,0 +1,9 @@
+import MailIcon from '@mui/icons-material/Mail';
+
+export const NAV_LIST = [
+  {
+    title: 'Chờ xử lý',
+    icon: <MailIcon />,
+    href: '/dashboard',
+  },
+];

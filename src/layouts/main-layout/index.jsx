@@ -1,0 +1,19 @@
+// @Mui
+
+import Header from '@/layouts/main-layout/header.jsx';
+import Nav from '@/layouts/main-layout/nav.jsx';
+import { useBoolean } from '@/hooks/use-boolean.jsx';
+import Box from '@mui/material/Box';
+import Main from '@/layouts/main-layout/main.jsx';
+
+export const MainLayout = ({ children }) => {
+  const nav = useBoolean();
+
+  return (
+    <Box component={'section'} sx={{ display: 'flex' }}>
+      <Header open={nav.value} onToggleNav={nav.onToggle} />
+      <Nav openNav={nav.value} />
+      <Main>{children}</Main>
+    </Box>
+  );
+};
