@@ -560,3 +560,21 @@ tr:hover {
 .date-range-group .custom-date-input:last-child {
   border-right: none;
 }
+.scrollable-table {
+  max-height: 250px;
+  overflow-y: scroll; /* vẫn cho cuộn */
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE/Edge */
+}
+
+.scrollable-table::-webkit-scrollbar {
+  display: none; /* Chrome, Safari */
+}
+
+/* Sticky header */
+.sticky-header {
+  position: sticky;
+  top: 0;
+  z-index: 5;
+  background-color: #e6f3ff; // hoặc #f0f8ff, tùy theo theme bạn đang dùng
+}

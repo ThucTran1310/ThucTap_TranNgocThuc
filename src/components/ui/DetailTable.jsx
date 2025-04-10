@@ -1,4 +1,3 @@
-// 📁 src/components/ui/DetailTable.jsx
 import { useState } from "react";
 import { Table, TableHead, TableRow, TableCell, TableBody } from "@/components/ui/table";
 import "@/pages/dashboard/dashboard.scss";
@@ -35,24 +34,22 @@ const DetailTable = ({ data = [] }) => {
                                 <TableCell>Nhóm chat</TableCell>
                                 <TableCell>Nội dung tin nhắn</TableCell>
                                 <TableCell>Tên người gửi</TableCell>
-                                <TableCell>Email người gửi</TableCell>
                                 <TableCell>Ngày gửi</TableCell>
                             </TableRow>
                         </TableHead>
                         <TableBody>
                             {pageData.map((item, index) => (
-                                <TableRow key={`${item.id || index}`}>
+                                <TableRow key={item._id || index}>
                                     <TableCell>{startIdx + index + 1}</TableCell>
-                                    <TableCell>{item.maNv}</TableCell>
-                                    <TableCell>{item.hoTen}</TableCell>
-                                    <TableCell>{item.boPhan}</TableCell>
-                                    <TableCell>{item.viTri}</TableCell>
-                                    <TableCell>{item.nghiepVu}</TableCell>
-                                    <TableCell>{item.nhomChat}</TableCell>
-                                    <TableCell>{item.noiDung?.length > 20 ? item.noiDung.slice(0, 20) + "..." : item.noiDung}</TableCell>
-                                    <TableCell>{item.tenNguoiGui}</TableCell>
-                                    <TableCell>{item.emailNguoiGui}</TableCell>
-                                    <TableCell>{item.ngayGui}</TableCell>
+                                    <TableCell>{item.partner_user_code}</TableCell>
+                                    <TableCell>{item.partner_user_name}</TableCell>
+                                    <TableCell>{item.partner_user_department}</TableCell>
+                                    <TableCell>{item.partner_user_position}</TableCell>
+                                    <TableCell>{item.partner_user_major}</TableCell>
+                                    <TableCell>{item.room_name}</TableCell>
+                                    <TableCell>{item.parsed_text}</TableCell>
+                                    <TableCell>{item.from_partner_user_name}</TableCell>
+                                    <TableCell>{new Date(item.time).toLocaleString()}</TableCell>
                                 </TableRow>
                             ))}
                         </TableBody>
