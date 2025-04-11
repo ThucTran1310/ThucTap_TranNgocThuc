@@ -578,3 +578,6 @@ tr:hover {
   z-index: 5;
   background-color: #e6f3ff; // hoặc #f0f8ff, tùy theo theme bạn đang dùng
 }
+.react-datepicker-popper {
+  z-index: 9999 !important;
+}

@@ -1,6 +1,4 @@
 import React, { useEffect, useState } from "react";
-import Button from "@/components/ui/button";
-import Input from "@/components/ui/input";
 import Card from "@/components/ui/Card";
 import CardContent from "@/components/ui/CardContent";
 import { Table, TableHead, TableRow, TableCell, TableBody } from "@/components/ui/table";
@@ -8,7 +6,11 @@ import Select from "react-select";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import DetailTable from "@/components/ui/DetailTable";
-import { getPendingMessagesForStatistics, getPendingMessagesForDetails } from "@/services/apiTinNhan";
+import {
+    getPendingMessagesForStatistics,
+    getPendingMessagesForDetails,
+    getFilterOptions
+} from "@/services/apiTinNhan";
 import * as XLSX from "xlsx";
 import { Search, RefreshCcw, FileDown } from "lucide-react";
 import "./dashboard.scss";
@@ -16,45 +18,56 @@ import "./dashboard.scss";
 export default function DashBoard() {
     const [startDate, setStartDate] = useState(null);
     const [endDate, setEndDate] = useState(null);
-    const [receiver, setReceiver] = useState("");
-    const [sender, setSender] = useState("");
-    const [department, setDepartment] = useState(null);
-    const [job, setJob] = useState(null);
-    const [position, setPosition] = useState(null);
-    const [workplace, setWorkplace] = useState(null);
+    const [receiver, setReceiver] = useState([]);
+    const [sender, setSender] = useState([]);
+    const [department, setDepartment] = useState([]);
+    const [job, setJob] = useState([]);
+    const [position, setPosition] = useState([]);
+    const [workplace, setWorkplace] = useState([]);
+
+    const [departmentOptions, setDepartmentOptions] = useState([]);
+    const [majorOptions, setMajorOptions] = useState([]);
+    const [positionOptions, setPositionOptions] = useState([]);
+    const [workplaceOptions, setWorkplaceOptions] = useState([]);
+    const [userOptions, setUserOptions] = useState([]);
+
     const [departmentData, setDepartmentData] = useState([]);
     const [majorData, setMajorData] = useState([]);
     const [userData, setUserData] = useState([]);
     const [detailData, setDetailData] = useState([]);
     const [loading, setLoading] = useState(false);
 
+    const fetchFilterOptions = async () => {
+        try {
+            const filters = await getFilterOptions();
+            setDepartmentOptions(filters.departments || []);
+            setMajorOptions(filters.majors || []);
+            setPositionOptions(filters.positions || []);
+            setWorkplaceOptions(filters.locations || []);
+        } catch (err) {
+            console.error("Lỗi lấy filter options:", err);
+        }
+    };
 
     const fetchStatisticsData = async (params = {}) => {
         try {
             setLoading(true);
             const metaData = await getPendingMessagesForStatistics(params);
-            console.log("📊 metaData từ API:", metaData);
-
-            // ✅ Đúng tên theo API (summerize với 2 chữ "m")
-            const {
-                department_summerize,
-                major_summerize,
-                user_summerize
-            } = metaData || {};
-
+            const { department_summerize, major_summerize, user_summerize } = metaData || {};
             setDepartmentData(department_summerize || []);
             setMajorData(major_summerize || []);
             setUserData(user_summerize || []);
+            const users = (user_summerize || []).map(u => ({
+                label: u.name,
+                value: u.partner_user_id,
+            }));
+            setUserOptions(users);
         } catch (err) {
             console.error("Lỗi gọi API thống kê:", err);
-            setDepartmentData([]);
-            setMajorData([]);
-            setUserData([]);
         } finally {
             setLoading(false);
         }
     };
-
 
     const fetchDetailData = async (params = {}) => {
         try {
@@ -62,70 +75,70 @@ export default function DashBoard() {
             const data = await getPendingMessagesForDetails(params);
             setDetailData(data);
         } catch (err) {
-            console.error("Fetch error for details", err);
-            setDetailData([]);
+            console.error("Lỗi gọi API chi tiết:", err);
         } finally {
             setLoading(false);
         }
     };
 
-    useEffect(() => {
-        const init = async () => {
-            await Promise.all([
-                fetchStatisticsData({}),
-                fetchDetailData({})
-            ]);
-        };
-        init();
-    }, []);
-
-
     const handleSearch = () => {
         const params = {
-            fromDate: startDate?.toISOString() ?? undefined,
-            toDate: endDate?.toISOString() ?? undefined,
-            receiver,
-            sender,
-            departments: Array.isArray(department) ? department.map(d => d.value).join(",") : undefined,
-            jobTitles: Array.isArray(job) ? job.map(j => j.value).join(",") : undefined,
-            positions: Array.isArray(position) ? position.map(p => p.value).join(",") : undefined,
-            workplaces: Array.isArray(workplace) ? workplace.map(w => w.value).join(",") : undefined,
+            fromDate: startDate?.toISOString(),
+            toDate: endDate?.toISOString(),
+            receiverIds: receiver.map(r => r.value).join(",") || undefined,
+            senderIds: sender.map(s => s.value).join(",") || undefined,
+            departmentIds: department.map(d => d.value).join(",") || undefined,
+            majorIds: job.map(j => j.value).join(",") || undefined,
+            position_ids: position.map(p => p.value).join(",") || undefined,
+            location_ids: workplace.map(w => w.value).join(",") || undefined,
         };
         fetchStatisticsData(params);
         fetchDetailData(params);
     };
 
     const handleReset = () => {
-        setReceiver("");
-        setSender("");
+        setReceiver([]);
+        setSender([]);
         setStartDate(null);
         setEndDate(null);
-        setDepartment(null);
-        setJob(null);
-        setPosition(null);
-        setWorkplace(null);
-        fetchStatisticsData();
-        fetchDetailData();
+        setDepartment([]);
+        setJob([]);
+        setPosition([]);
+        setWorkplace([]);
+        handleSearch();
     };
 
     const handleExportExcel = () => {
-        const ws = XLSX.utils.json_to_sheet(userData);
+        const ws = XLSX.utils.json_to_sheet(detailData);
         const wb = XLSX.utils.book_new();
         XLSX.utils.book_append_sheet(wb, ws, "TinNhanCXL");
         XLSX.writeFile(wb, "DanhSachTinNhanCXL.xlsx");
     };
 
-    console.log("👀 departmentData:", departmentData);
-    console.log("👀 majorData:", majorData);
-    console.log("👀 userData:", userData);
+    useEffect(() => {
+        const init = async () => {
+            await fetchFilterOptions();
+            handleSearch();
+        };
+        init();
+    }, []);
+
+    const selectProps = {
+        isMulti: true,
+        isLoading: loading,
+        menuPortalTarget: document.body,
+        styles: {
+            menuPortal: base => ({ ...base, zIndex: 9999 }),
+        },
+    };
 
     return (
         <section>
-            {/* FILTER FORM */}
+            {/* FORM FILTER */}
             <div className="filter-form">
                 <div className="filter-form__row">
-                    <Input placeholder="Tìm theo người nhận" value={receiver} onChange={(e) => setReceiver(e.target.value)} />
-                    <Input placeholder="Tìm theo người gửi" value={sender} onChange={(e) => setSender(e.target.value)} />
+                    <Select {...selectProps} placeholder="Người nhận" value={receiver} onChange={setReceiver} options={userOptions} />
+                    <Select {...selectProps} placeholder="Người gửi" value={sender} onChange={setSender} options={userOptions} />
                     <div className="date-range-group">
                         <DatePicker
                             selected={startDate}
@@ -133,6 +146,7 @@ export default function DashBoard() {
                             placeholderText="Từ ngày"
                             className="custom-date-input"
                             dateFormat="dd/MM/yyyy"
+                            popperClassName="z-datepicker"
                         />
                         <DatePicker
                             selected={endDate}
@@ -140,15 +154,16 @@ export default function DashBoard() {
                             placeholderText="Đến ngày"
                             className="custom-date-input"
                             dateFormat="dd/MM/yyyy"
+                            popperClassName="z-datepicker"
                         />
                     </div>
                 </div>
 
                 <div className="filter-form__row">
-                    <Select placeholder="Bộ phận" value={department} onChange={setDepartment} isMulti />
-                    <Select placeholder="Nghiệp vụ" value={job} onChange={setJob} isMulti />
-                    <Select placeholder="Vị trí" value={position} onChange={setPosition} isMulti />
-                    <Select placeholder="Nơi làm việc" value={workplace} onChange={setWorkplace} isMulti />
+                    <Select {...selectProps} placeholder="Bộ phận" value={department} onChange={setDepartment} options={departmentOptions} />
+                    <Select {...selectProps} placeholder="Nghiệp vụ" value={job} onChange={setJob} options={majorOptions} />
+                    <Select {...selectProps} placeholder="Vị trí" value={position} onChange={setPosition} options={positionOptions} />
+                    <Select {...selectProps} placeholder="Nơi làm việc" value={workplace} onChange={setWorkplace} options={workplaceOptions} />
                 </div>
 
                 <div className="filter-buttons">
@@ -158,12 +173,11 @@ export default function DashBoard() {
                 </div>
             </div>
 
-            {/* THỐNG KÊ */}
+            {/* BẢNG THỐNG KÊ */}
             <Card>
                 <CardContent>
                     <h3 className="section-title">Số lượng theo bộ phận / nghiệp vụ</h3>
                     <div className="tables-wrapper">
-                        {/* BẢNG BỘ PHẬN */}
                         <div className="table-container">
                             <div className="scrollable-table">
                                 <Table>
@@ -175,8 +189,11 @@ export default function DashBoard() {
                                     </TableHead>
                                     <TableBody>
                                         {departmentData.map((bp, idx) => (
-                                            <TableRow key={idx}>
-                                                <TableCell>{bp.name}</TableCell>
+                                            <TableRow key={idx} onClick={() => {
+                                                setDepartment([{ value: bp.id, label: bp.name }]);
+                                                handleSearch();
+                                            }}>
+                                                <TableCell>{bp.name || "Không rõ"}</TableCell>
                                                 <TableCell>{bp.count}</TableCell>
                                             </TableRow>
                                         ))}
@@ -185,7 +202,6 @@ export default function DashBoard() {
                             </div>
                         </div>
 
-                        {/* BẢNG NGHIỆP VỤ */}
                         <div className="table-container">
                             <div className="scrollable-table">
                                 <Table>
@@ -197,8 +213,11 @@ export default function DashBoard() {
                                     </TableHead>
                                     <TableBody>
                                         {majorData.map((mj, idx) => (
-                                            <TableRow key={idx}>
-                                                <TableCell>{mj.name}</TableCell>
+                                            <TableRow key={idx} onClick={() => {
+                                                setJob([{ value: mj.id, label: mj.name }]);
+                                                handleSearch();
+                                            }}>
+                                                <TableCell>{mj.name || "Không rõ"}</TableCell>
                                                 <TableCell>{mj.count}</TableCell>
                                             </TableRow>
                                         ))}
@@ -207,7 +226,6 @@ export default function DashBoard() {
                             </div>
                         </div>
 
-                        {/* BẢNG NHÂN VIÊN */}
                         <div className="table-container">
                             <div className="scrollable-table">
                                 <Table>
@@ -232,8 +250,7 @@ export default function DashBoard() {
                 </CardContent>
             </Card>
 
-
-            {/* CHI TIẾT */}
+            {/* BẢNG CHI TIẾT */}
             <DetailTable data={detailData} />
         </section>
     );

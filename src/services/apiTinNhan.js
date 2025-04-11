@@ -60,3 +60,27 @@ export const getPendingMessagesForDetails = async (params = {}) => {
         return [];
     }
 };
+
+// ✅ API 3: Lấy danh sách filter options
+export const getFilterOptions = async () => {
+    const url = "https://apitestchat.hasaki.vn/api/v1/search/filters";
+
+    try {
+        const response = await axios.get(url, {
+            headers: {
+                Authorization: token,
+                Accept: "application/json",
+            },
+        });
+
+        return response.data?.data || {};
+    } catch (error) {
+        console.error("Lỗi khi gọi API filter options:", error);
+        return {
+            departments: [],
+            majors: [],
+            positions: [],
+            locations: [],
+        };
+    }
+};
