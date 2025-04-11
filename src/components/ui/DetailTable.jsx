@@ -47,12 +47,18 @@ const DetailTable = ({ data = [] }) => {
                                     <TableCell>{item.partner_user_position}</TableCell>
                                     <TableCell>{item.partner_user_major}</TableCell>
                                     <TableCell>{item.room_name}</TableCell>
-                                    <TableCell>{item.parsed_text}</TableCell>
+                                    <TableCell title={item.parsed_text}>
+                                        {item.parsed_text?.length > 20
+                                            ? item.parsed_text.slice(0, 20) + "..."
+                                            : item.parsed_text}
+                                    </TableCell>
+
                                     <TableCell>{item.from_partner_user_name}</TableCell>
                                     <TableCell>{new Date(item.time).toLocaleString()}</TableCell>
                                 </TableRow>
                             ))}
                         </TableBody>
+
                     </Table>
 
                     <div className="table-footer">

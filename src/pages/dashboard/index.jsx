@@ -35,7 +35,9 @@ export default function DashBoard() {
     const [majorData, setMajorData] = useState([]);
     const [userData, setUserData] = useState([]);
     const [detailData, setDetailData] = useState([]);
+    const [rawDetailData, setRawDetailData] = useState([]);
     const [loading, setLoading] = useState(false);
+    const [totalMessages, setTotalMessages] = useState(0); // ✅ thêm
 
     const fetchFilterOptions = async () => {
         try {
@@ -53,11 +55,13 @@ export default function DashBoard() {
         try {
             setLoading(true);
             const metaData = await getPendingMessagesForStatistics(params);
-            const { department_summerize, major_summerize, user_summerize } = metaData || {};
+            const { department_summerize, major_summerize, user_summerize, total_cxl } = metaData || {};
             setDepartmentData(department_summerize || []);
             setMajorData(major_summerize || []);
             setUserData(user_summerize || []);
-            const users = (user_summerize || []).map(u => ({
+            setTotalMessages(total_cxl || 0); // ✅ tổng số tin nhắn
+
+            const users = (user_summerize || []).map((u) => ({
                 label: u.name,
                 value: u.partner_user_id,
             }));
@@ -69,11 +73,11 @@ export default function DashBoard() {
         }
     };
 
-    const fetchDetailData = async (params = {}) => {
+    const fetchDetailData = async () => {
         try {
             setLoading(true);
-            const data = await getPendingMessagesForDetails(params);
-            setDetailData(data);
+            const data = await getPendingMessagesForDetails();
+            setRawDetailData(data);
         } catch (err) {
             console.error("Lỗi gọi API chi tiết:", err);
         } finally {
@@ -81,19 +85,43 @@ export default function DashBoard() {
         }
     };
 
+    const filterData = () => {
+        const receiverSet = new Set(receiver.map((r) => r.value));
+        const senderSet = new Set(sender.map((s) => s.value));
+        const deptSet = new Set(department.map((d) => d.value));
+        const majorSet = new Set(job.map((j) => j.value));
+        const posSet = new Set(position.map((p) => p.value));
+        const locSet = new Set(workplace.map((w) => w.value));
+
+        const filtered = rawDetailData.filter((item) => {
+            const time = new Date(item.time);
+            const inDate = (!startDate || time >= startDate) && (!endDate || time <= endDate);
+            const inReceiver = receiver.length === 0 || receiverSet.has(item.partner_user_id);
+            const inSender = sender.length === 0 || senderSet.has(item.from_partner_user_id);
+            const inDept = department.length === 0 || deptSet.has(item.partner_user_department_id);
+            const inMajor = job.length === 0 || majorSet.has(item.partner_user_major_id);
+            const inPos = position.length === 0 || posSet.has(item.partner_user_position_id);
+            const inLoc = workplace.length === 0 || locSet.has(item.partner_user_location_id);
+            return inDate && inReceiver && inSender && inDept && inMajor && inPos && inLoc;
+        });
+
+        setDetailData(filtered);
+    };
+
     const handleSearch = () => {
         const params = {
             fromDate: startDate?.toISOString(),
             toDate: endDate?.toISOString(),
-            receiverIds: receiver.map(r => r.value).join(",") || undefined,
-            senderIds: sender.map(s => s.value).join(",") || undefined,
-            departmentIds: department.map(d => d.value).join(",") || undefined,
-            majorIds: job.map(j => j.value).join(",") || undefined,
-            position_ids: position.map(p => p.value).join(",") || undefined,
-            location_ids: workplace.map(w => w.value).join(",") || undefined,
+            receiverIds: receiver.map((r) => r.value).join(",") || undefined,
+            senderIds: sender.map((s) => s.value).join(",") || undefined,
+            departmentIds: department.map((d) => d.value).join(",") || undefined,
+            majorIds: job.map((j) => j.value).join(",") || undefined,
+            position_ids: position.map((p) => p.value).join(",") || undefined,
+            location_ids: workplace.map((w) => w.value).join(",") || undefined,
         };
+
         fetchStatisticsData(params);
-        fetchDetailData(params);
+        filterData();
     };
 
     const handleReset = () => {
@@ -118,6 +146,7 @@ export default function DashBoard() {
     useEffect(() => {
         const init = async () => {
             await fetchFilterOptions();
+            await fetchDetailData();
             handleSearch();
         };
         init();
@@ -126,46 +155,39 @@ export default function DashBoard() {
     const selectProps = {
         isMulti: true,
         isLoading: loading,
+        classNamePrefix: "react-select",
         menuPortalTarget: document.body,
         styles: {
-            menuPortal: base => ({ ...base, zIndex: 9999 }),
+            menuPortal: (base) => ({ ...base, zIndex: 9999 }),
+            valueContainer: (base) => ({
+                ...base,
+                maxHeight: "40px",
+                overflowY: "auto",
+            }),
+            control: (base) => ({
+                ...base,
+                minHeight: "40px",
+            }),
         },
     };
 
     return (
         <section>
-            {/* FORM FILTER */}
             <div className="filter-form">
                 <div className="filter-form__row">
                     <Select {...selectProps} placeholder="Người nhận" value={receiver} onChange={setReceiver} options={userOptions} />
                     <Select {...selectProps} placeholder="Người gửi" value={sender} onChange={setSender} options={userOptions} />
                     <div className="date-range-group">
-                        <DatePicker
-                            selected={startDate}
-                            onChange={(date) => setStartDate(date)}
-                            placeholderText="Từ ngày"
-                            className="custom-date-input"
-                            dateFormat="dd/MM/yyyy"
-                            popperClassName="z-datepicker"
-                        />
-                        <DatePicker
-                            selected={endDate}
-                            onChange={(date) => setEndDate(date)}
-                            placeholderText="Đến ngày"
-                            className="custom-date-input"
-                            dateFormat="dd/MM/yyyy"
-                            popperClassName="z-datepicker"
-                        />
+                        <DatePicker selected={startDate} onChange={setStartDate} placeholderText="Từ ngày" className="custom-date-input" dateFormat="dd/MM/yyyy" />
+                        <DatePicker selected={endDate} onChange={setEndDate} placeholderText="Đến ngày" className="custom-date-input" dateFormat="dd/MM/yyyy" />
                     </div>
                 </div>
-
                 <div className="filter-form__row">
                     <Select {...selectProps} placeholder="Bộ phận" value={department} onChange={setDepartment} options={departmentOptions} />
                     <Select {...selectProps} placeholder="Nghiệp vụ" value={job} onChange={setJob} options={majorOptions} />
                     <Select {...selectProps} placeholder="Vị trí" value={position} onChange={setPosition} options={positionOptions} />
                     <Select {...selectProps} placeholder="Nơi làm việc" value={workplace} onChange={setWorkplace} options={workplaceOptions} />
                 </div>
-
                 <div className="filter-buttons">
                     <button onClick={handleSearch}><Search size={16} /> Tìm</button>
                     <button onClick={handleReset}><RefreshCcw size={16} /> Làm mới</button>
@@ -173,84 +195,89 @@ export default function DashBoard() {
                 </div>
             </div>
 
-            {/* BẢNG THỐNG KÊ */}
+            {/* ✅ Tổng số tin nhắn CXL */}
+            <div className="total-cxl">
+                Tổng tin nhắn CXL: <strong>{totalMessages.toLocaleString()}</strong>
+            </div>
+
             <Card>
                 <CardContent>
                     <h3 className="section-title">Số lượng theo bộ phận / nghiệp vụ</h3>
                     <div className="tables-wrapper">
                         <div className="table-container">
-                            <div className="scrollable-table">
-                                <Table>
-                                    <TableHead className="sticky-header">
-                                        <TableRow>
-                                            <TableCell>Bộ phận</TableCell>
-                                            <TableCell>Số lượng</TableCell>
+                            <Table>
+                                <TableHead className="sticky-header">
+                                    <TableRow>
+                                        <TableCell>Bộ phận</TableCell>
+                                        <TableCell>Số lượng</TableCell>
+                                    </TableRow>
+                                </TableHead>
+                                <TableBody>
+                                    {departmentData.map((bp, idx) => (
+                                        <TableRow key={idx} onClick={() => {
+                                            setDepartment([{ label: bp.name, value: bp.id }]);
+                                            handleSearch();
+                                        }}>
+                                            <TableCell>{bp.name}</TableCell>
+                                            <TableCell>{bp.count}</TableCell>
                                         </TableRow>
-                                    </TableHead>
-                                    <TableBody>
-                                        {departmentData.map((bp, idx) => (
-                                            <TableRow key={idx} onClick={() => {
-                                                setDepartment([{ value: bp.id, label: bp.name }]);
-                                                handleSearch();
-                                            }}>
-                                                <TableCell>{bp.name || "Không rõ"}</TableCell>
-                                                <TableCell>{bp.count}</TableCell>
-                                            </TableRow>
-                                        ))}
-                                    </TableBody>
-                                </Table>
-                            </div>
+                                    ))}
+                                </TableBody>
+                            </Table>
                         </div>
 
                         <div className="table-container">
-                            <div className="scrollable-table">
-                                <Table>
-                                    <TableHead className="sticky-header">
-                                        <TableRow>
-                                            <TableCell>Nghiệp vụ</TableCell>
-                                            <TableCell>Số lượng</TableCell>
+                            <Table>
+                                <TableHead className="sticky-header">
+                                    <TableRow>
+                                        <TableCell>Nghiệp vụ</TableCell>
+                                        <TableCell>Số lượng</TableCell>
+                                    </TableRow>
+                                </TableHead>
+                                <TableBody>
+                                    {majorData.map((mj, idx) => (
+                                        <TableRow key={idx} onClick={() => {
+                                            setJob([{ label: mj.name, value: mj.id }]);
+                                            handleSearch();
+                                        }}>
+                                            <TableCell>{mj.name}</TableCell>
+                                            <TableCell>{mj.count}</TableCell>
                                         </TableRow>
-                                    </TableHead>
-                                    <TableBody>
-                                        {majorData.map((mj, idx) => (
-                                            <TableRow key={idx} onClick={() => {
-                                                setJob([{ value: mj.id, label: mj.name }]);
-                                                handleSearch();
-                                            }}>
-                                                <TableCell>{mj.name || "Không rõ"}</TableCell>
-                                                <TableCell>{mj.count}</TableCell>
-                                            </TableRow>
-                                        ))}
-                                    </TableBody>
-                                </Table>
-                            </div>
+                                    ))}
+                                </TableBody>
+                            </Table>
                         </div>
 
                         <div className="table-container">
-                            <div className="scrollable-table">
-                                <Table>
-                                    <TableHead className="sticky-header">
-                                        <TableRow>
-                                            <TableCell>Nhân viên</TableCell>
-                                            <TableCell>Số lượng</TableCell>
+                            <Table>
+                                <TableHead className="sticky-header">
+                                    <TableRow>
+                                        <TableCell>Nhân viên</TableCell>
+                                        <TableCell>Số lượng</TableCell>
+                                    </TableRow>
+                                </TableHead>
+                                <TableBody>
+                                    {userData.slice(0, 10).map((nv, idx) => (
+                                        <TableRow key={idx}>
+                                            <TableCell>
+                                                <div className="user-info-row">
+                                                    <img src={nv.avatar} alt={nv.name} className="avatar" />
+                                                    <div>
+                                                        <div className="user-name">{nv.name}</div>
+                                                        <div className="user-meta">{nv.infomation_long}</div>
+                                                    </div>
+                                                </div>
+                                            </TableCell>
+                                            <TableCell>{nv.count}</TableCell>
                                         </TableRow>
-                                    </TableHead>
-                                    <TableBody>
-                                        {userData.slice(0, 10).map((nv, idx) => (
-                                            <TableRow key={idx}>
-                                                <TableCell>{nv.name}</TableCell>
-                                                <TableCell>{nv.count}</TableCell>
-                                            </TableRow>
-                                        ))}
-                                    </TableBody>
-                                </Table>
-                            </div>
+                                    ))}
+                                </TableBody>
+                            </Table>
                         </div>
                     </div>
                 </CardContent>
             </Card>
 
-            {/* BẢNG CHI TIẾT */}
             <DetailTable data={detailData} />
         </section>
     );
