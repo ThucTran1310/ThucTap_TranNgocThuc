@@ -574,13 +574,11 @@ tr:hover {
 /* Sticky header */
 .sticky-header {
   position: sticky;
-  top: 0;
-  z-index: 5;
+  top: -10px;
   background-color: #e6f3ff; // hoặc #f0f8ff, tùy theo theme bạn đang dùng
 }
-.react-datepicker-popper {
-  z-index: 9999 !important;
-}
+
+
 .table-cell-ellipsis {
   white-space: nowrap;
   overflow: hidden;

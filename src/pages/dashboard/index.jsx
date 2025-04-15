@@ -11,7 +11,7 @@ import {
     getPendingMessagesForDetails,
     getFilterOptions
 } from "@/services/apiTinNhan";
-import * as XLSX from "xlsx";
+import ExcelJS from 'exceljs'; // Import ExcelJS
 import { Search, RefreshCcw, FileDown } from "lucide-react";
 import "./dashboard.scss";
 
@@ -37,7 +37,15 @@ export default function DashBoard() {
     const [detailData, setDetailData] = useState([]);
     const [rawDetailData, setRawDetailData] = useState([]);
     const [loading, setLoading] = useState(false);
-    const [totalMessages, setTotalMessages] = useState(0); // ✅ thêm
+    const [totalMessages, setTotalMessages] = useState(0);
+
+    const [initialStats, setInitialStats] = useState({
+        departmentData: [],
+        majorData: [],
+        userData: [],
+        total: 0,
+    });
+    const [hasFiltered, setHasFiltered] = useState(false);
 
     const fetchFilterOptions = async () => {
         try {
@@ -51,25 +59,27 @@ export default function DashBoard() {
         }
     };
 
-    const fetchStatisticsData = async (params = {}) => {
+    const fetchInitialStatistics = async () => {
         try {
-            setLoading(true);
-            const metaData = await getPendingMessagesForStatistics(params);
-            const { department_summerize, major_summerize, user_summerize, total_cxl } = metaData || {};
-            setDepartmentData(department_summerize || []);
-            setMajorData(major_summerize || []);
-            setUserData(user_summerize || []);
-            setTotalMessages(total_cxl || 0); // ✅ tổng số tin nhắn
+            const res = await getPendingMessagesForStatistics();
+            setInitialStats({
+                departmentData: res.department_summerize || [],
+                majorData: res.major_summerize || [],
+                userData: res.user_summerize || [],
+                total: res.total_cxl || 0,
+            });
+            setDepartmentData(res.department_summerize || []);
+            setMajorData(res.major_summerize || []);
+            setUserData(res.user_summerize || []);
+            setTotalMessages(res.total_cxl || 0);
 
-            const users = (user_summerize || []).map((u) => ({
+            const users = (res.user_summerize || []).map((u) => ({
                 label: u.name,
                 value: u.partner_user_id,
             }));
             setUserOptions(users);
         } catch (err) {
-            console.error("Lỗi gọi API thống kê:", err);
-        } finally {
-            setLoading(false);
+            console.error("Lỗi API thống kê:", err);
         }
     };
 
@@ -78,6 +88,7 @@ export default function DashBoard() {
             setLoading(true);
             const data = await getPendingMessagesForDetails();
             setRawDetailData(data);
+            setDetailData(data);
         } catch (err) {
             console.error("Lỗi gọi API chi tiết:", err);
         } finally {
@@ -85,7 +96,29 @@ export default function DashBoard() {
         }
     };
 
-    const filterData = () => {
+    const updateSummaryTables = (data) => {
+        const groupAndCount = (items, key, extra = {}) => {
+            const map = new Map();
+            for (const item of items) {
+                const id = item[key + "_id"];
+                if (!id) continue;
+                if (!map.has(id)) {
+                    map.set(id, { id, name: item[key], count: 0, ...extra });
+                }
+                map.get(id).count++;
+            }
+            return Array.from(map.values()).sort((a, b) => b.count - a.count);
+        };
+
+        setDepartmentData(groupAndCount(data, "partner_user_department"));
+        setMajorData(groupAndCount(data, "partner_user_major"));
+        setUserData(groupAndCount(data, "partner_user", { avatar: "", infomation_long: "" }));
+        setTotalMessages(data.length);
+    };
+
+    const handleSearch = () => {
+        setHasFiltered(true);
+
         const receiverSet = new Set(receiver.map((r) => r.value));
         const senderSet = new Set(sender.map((s) => s.value));
         const deptSet = new Set(department.map((d) => d.value));
@@ -106,25 +139,77 @@ export default function DashBoard() {
         });
 
         setDetailData(filtered);
+        updateSummaryTables(filtered);
     };
+    const handleExportExcel = () => {
+        const workbook = new ExcelJS.Workbook();
+        const worksheet = workbook.addWorksheet('TinNhanCXL'); // Create a new sheet
 
-    const handleSearch = () => {
-        const params = {
-            fromDate: startDate?.toISOString(),
-            toDate: endDate?.toISOString(),
-            receiverIds: receiver.map((r) => r.value).join(",") || undefined,
-            senderIds: sender.map((s) => s.value).join(",") || undefined,
-            departmentIds: department.map((d) => d.value).join(",") || undefined,
-            majorIds: job.map((j) => j.value).join(",") || undefined,
-            position_ids: position.map((p) => p.value).join(",") || undefined,
-            location_ids: workplace.map((w) => w.value).join(",") || undefined,
-        };
+        // Define columns for the sheet with appropriate width
+        worksheet.columns = [
+            { header: '#', key: 'index', width: 10 },
+            { header: 'Mã NV', key: 'maNV', width: 15 },
+            { header: 'Họ tên', key: 'hoTen', width: 25 },
+            { header: 'Bộ phận', key: 'boPhan', width: 20 },
+            { header: 'Vị trí', key: 'viTri', width: 15 },
+            { header: 'Nghiệp vụ', key: 'nghiepVu', width: 20 },
+            { header: 'Nhóm chat', key: 'nhomChat', width: 25 },
+            { header: 'Nội dung tin nhắn', key: 'noiDungTinNhan', width: 30 },
+            { header: 'Tên người gửi', key: 'tenNguoiGui', width: 20 },
+            { header: 'Ngày gửi', key: 'ngayGui', width: 20 },
+        ];
 
-        fetchStatisticsData(params);
-        filterData();
+        // Apply font style to the header and make it bold
+        worksheet.getRow(1).font = { name: 'Arial', size: 12, bold: true };
+
+        // Apply font style to all other rows (Arial, size 12) and set alignment to center
+        worksheet.eachRow((row, rowNumber) => {
+            row.eachCell((cell, colNumber) => {
+                cell.font = { name: 'Arial', size: 12 }; // Set font to Arial with size 12
+                cell.alignment = { wrapText: true, vertical: 'middle', horizontal: 'center' }; // Enable text wrapping and align center
+            });
+        });
+
+        // Add data rows to the sheet with font applied
+        detailData.forEach((row, index) => {
+            const rowData = {
+                index: index + 1,
+                maNV: row.partner_user_code,
+                hoTen: row.partner_user_name,
+                boPhan: row.partner_user_department,
+                viTri: row.partner_user_position,
+                nghiepVu: row.partner_user_major,
+                nhomChat: row.room_name,
+                noiDungTinNhan: row.parsed_text,
+                tenNguoiGui: row.from_partner_user_name,
+                ngayGui: new Date(row.time).toLocaleString('vi-VN', {
+                    day: '2-digit',
+                    month: '2-digit',
+                    year: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    second: '2-digit',
+                }),
+            };
+
+            // Add row to the sheet
+            worksheet.addRow(rowData);
+        });
+
+        // Write the Excel file to the user's browser
+        workbook.xlsx.writeBuffer().then((buffer) => {
+            const blob = new Blob([buffer], {
+                type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+            });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = 'DanhSachTinNhanCXL.xlsx'; // Name the downloaded file
+            link.click();
+        });
     };
 
     const handleReset = () => {
+        // Reset các bộ lọc về trạng thái ban đầu
         setReceiver([]);
         setSender([]);
         setStartDate(null);
@@ -133,21 +218,18 @@ export default function DashBoard() {
         setJob([]);
         setPosition([]);
         setWorkplace([]);
-        handleSearch();
-    };
 
-    const handleExportExcel = () => {
-        const ws = XLSX.utils.json_to_sheet(detailData);
-        const wb = XLSX.utils.book_new();
-        XLSX.utils.book_append_sheet(wb, ws, "TinNhanCXL");
-        XLSX.writeFile(wb, "DanhSachTinNhanCXL.xlsx");
-    };
+        // Reset dữ liệu thống kê về trạng thái ban đầu
+        fetchInitialStatistics();
+        fetchDetailData(); // Fetch lại dữ liệu chi tiết gốc
 
+        setHasFiltered(false); // Đặt lại trạng thái lọc
+    };
     useEffect(() => {
         const init = async () => {
             await fetchFilterOptions();
+            await fetchInitialStatistics();
             await fetchDetailData();
-            handleSearch();
         };
         init();
     }, []);
@@ -195,89 +277,90 @@ export default function DashBoard() {
                 </div>
             </div>
 
-            {/* ✅ Tổng số tin nhắn CXL */}
-            <div className="total-cxl">
-                Tổng tin nhắn CXL: <strong>{totalMessages.toLocaleString()}</strong>
-            </div>
-
             <Card>
                 <CardContent>
-                    <h3 className="section-title">Số lượng theo bộ phận / nghiệp vụ</h3>
-                    <div className="tables-wrapper">
-                        <div className="table-container">
-                            <Table>
-                                <TableHead className="sticky-header">
-                                    <TableRow>
-                                        <TableCell>Bộ phận</TableCell>
-                                        <TableCell>Số lượng</TableCell>
-                                    </TableRow>
-                                </TableHead>
-                                <TableBody>
-                                    {departmentData.map((bp, idx) => (
-                                        <TableRow key={idx} onClick={() => {
-                                            setDepartment([{ label: bp.name, value: bp.id }]);
-                                            handleSearch();
-                                        }}>
-                                            <TableCell>{bp.name}</TableCell>
-                                            <TableCell>{bp.count}</TableCell>
+                    <div className="table-container">
+                        <h3 className="section-title">Số lượng theo bộ phận / nghiệp vụ</h3>
+                        <div className="tables-wrapper">
+                            <div className="table-container">
+                                <Table>
+                                    <TableHead className="sticky-header">
+                                        <TableRow>
+                                            <TableCell>Bộ phận</TableCell>
+                                            <TableCell>Số lượng</TableCell>
                                         </TableRow>
-                                    ))}
-                                </TableBody>
-                            </Table>
-                        </div>
+                                    </TableHead>
+                                    <TableBody>
+                                        {departmentData.map((bp, idx) => (
+                                            <TableRow key={idx} onClick={() => {
+                                                setDepartment([{ label: bp.name, value: bp.id }]);
+                                                handleSearch();
+                                            }}>
+                                                <TableCell>{bp.name}</TableCell>
+                                                <TableCell>{bp.count}</TableCell>
+                                            </TableRow>
+                                        ))}
+                                    </TableBody>
+                                </Table>
+                            </div>
 
-                        <div className="table-container">
-                            <Table>
-                                <TableHead className="sticky-header">
-                                    <TableRow>
-                                        <TableCell>Nghiệp vụ</TableCell>
-                                        <TableCell>Số lượng</TableCell>
-                                    </TableRow>
-                                </TableHead>
-                                <TableBody>
-                                    {majorData.map((mj, idx) => (
-                                        <TableRow key={idx} onClick={() => {
-                                            setJob([{ label: mj.name, value: mj.id }]);
-                                            handleSearch();
-                                        }}>
-                                            <TableCell>{mj.name}</TableCell>
-                                            <TableCell>{mj.count}</TableCell>
+                            <div className="table-container">
+                                <Table>
+                                    <TableHead className="sticky-header">
+                                        <TableRow>
+                                            <TableCell>Nghiệp vụ</TableCell>
+                                            <TableCell>Số lượng</TableCell>
                                         </TableRow>
-                                    ))}
-                                </TableBody>
-                            </Table>
-                        </div>
+                                    </TableHead>
+                                    <TableBody>
+                                        {majorData.map((mj, idx) => (
+                                            <TableRow key={idx} onClick={() => {
+                                                setJob([{ label: mj.name, value: mj.id }]);
+                                                handleSearch();
+                                            }}>
+                                                <TableCell>{mj.name}</TableCell>
+                                                <TableCell>{mj.count}</TableCell>
+                                            </TableRow>
+                                        ))}
+                                    </TableBody>
+                                </Table>
+                            </div>
 
-                        <div className="table-container">
-                            <Table>
-                                <TableHead className="sticky-header">
-                                    <TableRow>
-                                        <TableCell>Nhân viên</TableCell>
-                                        <TableCell>Số lượng</TableCell>
-                                    </TableRow>
-                                </TableHead>
-                                <TableBody>
-                                    {userData.slice(0, 10).map((nv, idx) => (
-                                        <TableRow key={idx}>
-                                            <TableCell>
-                                                <div className="user-info-row">
-                                                    <img src={nv.avatar} alt={nv.name} className="avatar" />
-                                                    <div>
-                                                        <div className="user-name">{nv.name}</div>
-                                                        <div className="user-meta">{nv.infomation_long}</div>
+                            <div className="table-container">
+                                <Table>
+                                    <TableHead className="sticky-header">
+                                        <TableRow>
+                                            <TableCell>Nhân viên</TableCell>
+                                            <TableCell>Số lượng</TableCell>
+                                        </TableRow>
+                                    </TableHead>
+                                    <TableBody>
+                                        {userData.slice(0, 10).map((nv, idx) => (
+                                            <TableRow key={idx}>
+                                                <TableCell>
+                                                    <div className="user-info-row">
+                                                        <img src={nv.avatar || "default-avatar.jpg"} alt={nv.name} className="avatar" />
+                                                        <div>
+                                                            <div className="user-name">{nv.name}</div>
+                                                            <div className="user-meta">{nv.infomation_long}</div>
+                                                        </div>
                                                     </div>
-                                                </div>
-                                            </TableCell>
-                                            <TableCell>{nv.count}</TableCell>
-                                        </TableRow>
-                                    ))}
-                                </TableBody>
-                            </Table>
+                                                </TableCell>
+                                                <TableCell>{nv.count}</TableCell>
+                                            </TableRow>
+                                        ))}
+                                    </TableBody>
+                                </Table>
+                            </div>
+
+                        </div>
+                        <div className="total-cxl">
+                            Tổng tin nhắn CXL: <strong>{totalMessages.toLocaleString()}</strong>
                         </div>
                     </div>
                 </CardContent>
             </Card>
-
+            <h3 className="section-title">Danh sách Thông Tin</h3>
             <DetailTable data={detailData} />
         </section>
     );
