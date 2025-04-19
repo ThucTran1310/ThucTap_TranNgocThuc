@@ -11,11 +11,13 @@ import {
     getPendingMessagesForDetails,
     getFilterOptions
 } from "@/services/apiTinNhan";
-import ExcelJS from 'exceljs'; // Import ExcelJS
+import ExcelJS from 'exceljs';
 import { Search, RefreshCcw, FileDown } from "lucide-react";
 import "./dashboard.scss";
 
 export default function DashBoard() {
+    // ================================
+    // State
     const [startDate, setStartDate] = useState(null);
     const [endDate, setEndDate] = useState(null);
     const [receiver, setReceiver] = useState([]);
@@ -38,15 +40,10 @@ export default function DashBoard() {
     const [rawDetailData, setRawDetailData] = useState([]);
     const [loading, setLoading] = useState(false);
     const [totalMessages, setTotalMessages] = useState(0);
-
-    const [initialStats, setInitialStats] = useState({
-        departmentData: [],
-        majorData: [],
-        userData: [],
-        total: 0,
-    });
     const [hasFiltered, setHasFiltered] = useState(false);
 
+    // ================================
+    // Lấy dữ liệu lọc
     const fetchFilterOptions = async () => {
         try {
             const filters = await getFilterOptions();
@@ -59,15 +56,11 @@ export default function DashBoard() {
         }
     };
 
+    // ================================
+    // Dữ liệu ban đầu
     const fetchInitialStatistics = async () => {
         try {
             const res = await getPendingMessagesForStatistics();
-            setInitialStats({
-                departmentData: res.department_summerize || [],
-                majorData: res.major_summerize || [],
-                userData: res.user_summerize || [],
-                total: res.total_cxl || 0,
-            });
             setDepartmentData(res.department_summerize || []);
             setMajorData(res.major_summerize || []);
             setUserData(res.user_summerize || []);
@@ -96,14 +89,16 @@ export default function DashBoard() {
         }
     };
 
+    // ================================
+    // Tổng hợp thống kê từ chi tiết
     const updateSummaryTables = (data) => {
-        const groupAndCount = (items, key, extra = {}) => {
+        const groupAndCount = (items, key, extraFields = {}) => {
             const map = new Map();
             for (const item of items) {
                 const id = item[key + "_id"];
                 if (!id) continue;
                 if (!map.has(id)) {
-                    map.set(id, { id, name: item[key], count: 0, ...extra });
+                    map.set(id, { id, name: item[key], count: 0, ...extraFields });
                 }
                 map.get(id).count++;
             }
@@ -112,13 +107,35 @@ export default function DashBoard() {
 
         setDepartmentData(groupAndCount(data, "partner_user_department"));
         setMajorData(groupAndCount(data, "partner_user_major"));
-        setUserData(groupAndCount(data, "partner_user", { avatar: "", infomation_long: "" }));
+
+        // 🔥 Cập nhật bảng nhân viên từ detailData
+        const userMap = new Map();
+        for (const item of data) {
+            const id = item.partner_user_id;
+            if (!id) continue;
+
+            if (!userMap.has(id)) {
+                userMap.set(id, {
+                    partner_user_id: id,
+                    name: item.partner_user_name,
+                    avatar: item.partner_user_avatar,
+                    infomation_long: `${item.partner_user_department} - ${item.partner_user_position} - ${item.partner_user_major} - ${item.partner_user_location}`,
+                    count: 1,
+                });
+            } else {
+                userMap.get(id).count++;
+            }
+        }
+        setUserData(Array.from(userMap.values()));
         setTotalMessages(data.length);
     };
 
+    // ================================
+    // Lọc dữ liệu
     const handleSearch = () => {
         setHasFiltered(true);
 
+        // Lọc lại dữ liệu
         const receiverSet = new Set(receiver.map((r) => r.value));
         const senderSet = new Set(sender.map((s) => s.value));
         const deptSet = new Set(department.map((d) => d.value));
@@ -126,6 +143,7 @@ export default function DashBoard() {
         const posSet = new Set(position.map((p) => p.value));
         const locSet = new Set(workplace.map((w) => w.value));
 
+        // Đảm bảo rằng rawDetailData được tải đúng và sẵn sàng
         const filtered = rawDetailData.filter((item) => {
             const time = new Date(item.time);
             const inDate = (!startDate || time >= startDate) && (!endDate || time <= endDate);
@@ -135,19 +153,23 @@ export default function DashBoard() {
             const inMajor = job.length === 0 || majorSet.has(item.partner_user_major_id);
             const inPos = position.length === 0 || posSet.has(item.partner_user_position_id);
             const inLoc = workplace.length === 0 || locSet.has(item.partner_user_location_id);
+
             return inDate && inReceiver && inSender && inDept && inMajor && inPos && inLoc;
         });
 
+        // Cập nhật lại dữ liệu chi tiết
         setDetailData(filtered);
         updateSummaryTables(filtered);
     };
+
+    // ================================
+    // Xuất Excel
     const handleExportExcel = () => {
         const workbook = new ExcelJS.Workbook();
-        const worksheet = workbook.addWorksheet('TinNhanCXL'); // Create a new sheet
+        const worksheet = workbook.addWorksheet('TinNhanCXL');
 
-        // Define columns for the sheet with appropriate width
         worksheet.columns = [
-            { header: '#', key: 'index', width: 10 },
+            { header: '#', key: 'index', width: 5 },
             { header: 'Mã NV', key: 'maNV', width: 15 },
             { header: 'Họ tên', key: 'hoTen', width: 25 },
             { header: 'Bộ phận', key: 'boPhan', width: 20 },
@@ -159,20 +181,10 @@ export default function DashBoard() {
             { header: 'Ngày gửi', key: 'ngayGui', width: 20 },
         ];
 
-        // Apply font style to the header and make it bold
-        worksheet.getRow(1).font = { name: 'Arial', size: 12, bold: true };
+        worksheet.getRow(1).font = { bold: true };
 
-        // Apply font style to all other rows (Arial, size 12) and set alignment to center
-        worksheet.eachRow((row, rowNumber) => {
-            row.eachCell((cell, colNumber) => {
-                cell.font = { name: 'Arial', size: 12 }; // Set font to Arial with size 12
-                cell.alignment = { wrapText: true, vertical: 'middle', horizontal: 'center' }; // Enable text wrapping and align center
-            });
-        });
-
-        // Add data rows to the sheet with font applied
         detailData.forEach((row, index) => {
-            const rowData = {
+            worksheet.addRow({
                 index: index + 1,
                 maNV: row.partner_user_code,
                 hoTen: row.partner_user_name,
@@ -182,34 +194,22 @@ export default function DashBoard() {
                 nhomChat: row.room_name,
                 noiDungTinNhan: row.parsed_text,
                 tenNguoiGui: row.from_partner_user_name,
-                ngayGui: new Date(row.time).toLocaleString('vi-VN', {
-                    day: '2-digit',
-                    month: '2-digit',
-                    year: 'numeric',
-                    hour: '2-digit',
-                    minute: '2-digit',
-                    second: '2-digit',
-                }),
-            };
-
-            // Add row to the sheet
-            worksheet.addRow(rowData);
+                ngayGui: new Date(row.time).toLocaleString('vi-VN'),
+            });
         });
 
-        // Write the Excel file to the user's browser
         workbook.xlsx.writeBuffer().then((buffer) => {
-            const blob = new Blob([buffer], {
-                type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-            });
+            const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
             const link = document.createElement('a');
             link.href = URL.createObjectURL(blob);
-            link.download = 'DanhSachTinNhanCXL.xlsx'; // Name the downloaded file
+            link.download = 'DanhSachTinNhanCXL.xlsx';
             link.click();
         });
     };
 
+    // ================================
+    // Làm mới
     const handleReset = () => {
-        // Reset các bộ lọc về trạng thái ban đầu
         setReceiver([]);
         setSender([]);
         setStartDate(null);
@@ -218,13 +218,13 @@ export default function DashBoard() {
         setJob([]);
         setPosition([]);
         setWorkplace([]);
-
-        // Reset dữ liệu thống kê về trạng thái ban đầu
         fetchInitialStatistics();
-        fetchDetailData(); // Fetch lại dữ liệu chi tiết gốc
-
-        setHasFiltered(false); // Đặt lại trạng thái lọc
+        fetchDetailData();
+        setHasFiltered(false);
     };
+
+    // ================================
+    // useEffect
     useEffect(() => {
         const init = async () => {
             await fetchFilterOptions();
@@ -253,113 +253,100 @@ export default function DashBoard() {
         },
     };
 
+    // ================================
+    // Render
     return (
         <section>
-            <div className="filter-form">
-                <div className="filter-form__row">
-                    <Select {...selectProps} placeholder="Người nhận" value={receiver} onChange={setReceiver} options={userOptions} />
-                    <Select {...selectProps} placeholder="Người gửi" value={sender} onChange={setSender} options={userOptions} />
-                    <div className="date-range-group">
-                        <DatePicker selected={startDate} onChange={setStartDate} placeholderText="Từ ngày" className="custom-date-input" dateFormat="dd/MM/yyyy" />
-                        <DatePicker selected={endDate} onChange={setEndDate} placeholderText="Đến ngày" className="custom-date-input" dateFormat="dd/MM/yyyy" />
+            <div className="table-container">
+                {/* Bộ lọc */}
+                <div className="filter-form">
+                    <div className="filter-form__row">
+                        <Select {...selectProps} placeholder="Người nhận" value={receiver} onChange={setReceiver} options={userOptions} />
+                        <Select {...selectProps} placeholder="Người gửi" value={sender} onChange={setSender} options={userOptions} />
+                        <div className="date-range-group">
+                            <DatePicker selected={startDate} onChange={setStartDate} placeholderText="Từ ngày" className="custom-date-input" dateFormat="dd/MM/yyyy" />
+                            <DatePicker selected={endDate} onChange={setEndDate} placeholderText="Đến ngày" className="custom-date-input" dateFormat="dd/MM/yyyy" />
+                        </div>
                     </div>
-                </div>
-                <div className="filter-form__row">
-                    <Select {...selectProps} placeholder="Bộ phận" value={department} onChange={setDepartment} options={departmentOptions} />
-                    <Select {...selectProps} placeholder="Nghiệp vụ" value={job} onChange={setJob} options={majorOptions} />
-                    <Select {...selectProps} placeholder="Vị trí" value={position} onChange={setPosition} options={positionOptions} />
-                    <Select {...selectProps} placeholder="Nơi làm việc" value={workplace} onChange={setWorkplace} options={workplaceOptions} />
-                </div>
-                <div className="filter-buttons">
-                    <button onClick={handleSearch}><Search size={16} /> Tìm</button>
-                    <button onClick={handleReset}><RefreshCcw size={16} /> Làm mới</button>
-                    <button onClick={handleExportExcel}><FileDown size={16} /> Xuất Excel</button>
+                    <div className="filter-form__row">
+                        <Select {...selectProps} placeholder="Bộ phận" value={department} onChange={setDepartment} options={departmentOptions} />
+                        <Select {...selectProps} placeholder="Nghiệp vụ" value={job} onChange={setJob} options={majorOptions} />
+                        <Select {...selectProps} placeholder="Vị trí" value={position} onChange={setPosition} options={positionOptions} />
+                        <Select {...selectProps} placeholder="Nơi làm việc" value={workplace} onChange={setWorkplace} options={workplaceOptions} />
+                    </div>
+                    <div className="filter-buttons">
+                        <button onClick={handleSearch}><Search size={16} /> Tìm</button>
+                        <button onClick={handleReset}><RefreshCcw size={16} /> Làm mới</button>
+                        <button onClick={handleExportExcel}><FileDown size={16} /> Xuất Excel</button>
+                    </div>
                 </div>
             </div>
 
             <Card>
                 <CardContent>
-                    <div className="table-container">
-                        <h3 className="section-title">Số lượng theo bộ phận / nghiệp vụ</h3>
-                        <div className="tables-wrapper">
-                            <div className="table-container">
-                                <Table>
-                                    <TableHead className="sticky-header">
-                                        <TableRow>
-                                            <TableCell>Bộ phận</TableCell>
-                                            <TableCell>Số lượng</TableCell>
+                    <h3 className="section-title">Số lượng theo bộ phận / nghiệp vụ</h3>
+                    <div className="tables-wrapper">
+                        <div className="table-container">
+                            <Table>
+                                <TableHead><TableRow><TableCell>Bộ phận</TableCell><TableCell>Số lượng</TableCell></TableRow></TableHead>
+                                <TableBody>
+                                    {departmentData.map((bp, idx) => (
+                                        <TableRow key={idx} onClick={() => {
+                                            setDepartment([{ label: bp.name, value: bp.id }]);
+                                            handleSearch();
+                                        }}>
+                                            <TableCell>{bp.name}</TableCell>
+                                            <TableCell>{bp.count}</TableCell>
                                         </TableRow>
-                                    </TableHead>
-                                    <TableBody>
-                                        {departmentData.map((bp, idx) => (
-                                            <TableRow key={idx} onClick={() => {
-                                                setDepartment([{ label: bp.name, value: bp.id }]);
-                                                handleSearch();
-                                            }}>
-                                                <TableCell>{bp.name}</TableCell>
-                                                <TableCell>{bp.count}</TableCell>
-                                            </TableRow>
-                                        ))}
-                                    </TableBody>
-                                </Table>
-                            </div>
-
-                            <div className="table-container">
-                                <Table>
-                                    <TableHead className="sticky-header">
-                                        <TableRow>
-                                            <TableCell>Nghiệp vụ</TableCell>
-                                            <TableCell>Số lượng</TableCell>
-                                        </TableRow>
-                                    </TableHead>
-                                    <TableBody>
-                                        {majorData.map((mj, idx) => (
-                                            <TableRow key={idx} onClick={() => {
-                                                setJob([{ label: mj.name, value: mj.id }]);
-                                                handleSearch();
-                                            }}>
-                                                <TableCell>{mj.name}</TableCell>
-                                                <TableCell>{mj.count}</TableCell>
-                                            </TableRow>
-                                        ))}
-                                    </TableBody>
-                                </Table>
-                            </div>
-
-                            <div className="table-container">
-                                <Table>
-                                    <TableHead className="sticky-header">
-                                        <TableRow>
-                                            <TableCell>Nhân viên</TableCell>
-                                            <TableCell>Số lượng</TableCell>
-                                        </TableRow>
-                                    </TableHead>
-                                    <TableBody>
-                                        {userData.slice(0, 10).map((nv, idx) => (
-                                            <TableRow key={idx}>
-                                                <TableCell>
-                                                    <div className="user-info-row">
-                                                        <img src={nv.avatar || "default-avatar.jpg"} alt={nv.name} className="avatar" />
-                                                        <div>
-                                                            <div className="user-name">{nv.name}</div>
-                                                            <div className="user-meta">{nv.infomation_long}</div>
-                                                        </div>
-                                                    </div>
-                                                </TableCell>
-                                                <TableCell>{nv.count}</TableCell>
-                                            </TableRow>
-                                        ))}
-                                    </TableBody>
-                                </Table>
-                            </div>
-
+                                    ))}
+                                </TableBody>
+                            </Table>
                         </div>
-                        <div className="total-cxl">
-                            Tổng tin nhắn CXL: <strong>{totalMessages.toLocaleString()}</strong>
+
+                        <div className="table-container">
+                            <Table>
+                                <TableHead><TableRow><TableCell>Nghiệp vụ</TableCell><TableCell>Số lượng</TableCell></TableRow></TableHead>
+                                <TableBody>
+                                    {majorData.map((mj, idx) => (
+                                        <TableRow key={idx} onClick={() => {
+                                            setJob([{ label: mj.name, value: mj.id }]);
+                                            handleSearch();
+                                        }}>
+                                            <TableCell>{mj.name}</TableCell>
+                                            <TableCell>{mj.count}</TableCell>
+                                        </TableRow>
+                                    ))}
+                                </TableBody>
+                            </Table>
+                        </div>
+
+                        <div className="table-container">
+                            <Table>
+                                <TableHead><TableRow><TableCell>Nhân viên</TableCell><TableCell>Số lượng</TableCell></TableRow></TableHead>
+                                <TableBody>
+                                    {userData.slice(0, 10).map((nv, idx) => (
+                                        <TableRow key={idx}>
+                                            <TableCell>
+                                                <div className="user-info-row">
+                                                    <img src={nv.avatar || "default-avatar.jpg"} alt={nv.name} className="avatar" />
+                                                    <div>
+                                                        <div className="user-name">{nv.name}</div>
+                                                        <div className="user-meta">{nv.infomation_long}</div>
+                                                    </div>
+                                                </div>
+                                            </TableCell>
+                                            <TableCell>{nv.count}</TableCell>
+                                        </TableRow>
+                                    ))}
+                                </TableBody>
+                            </Table>
                         </div>
                     </div>
+
+                    <div className="total-cxl">Tổng tin nhắn CXL: <strong>{totalMessages.toLocaleString()}</strong></div>
                 </CardContent>
             </Card>
+
             <h3 className="section-title">Danh sách Thông Tin</h3>
             <DetailTable data={detailData} />
         </section>

@@ -10,6 +10,18 @@ const DetailTable = ({ data = [] }) => {
     const pageData = data.slice(startIdx, startIdx + itemsPerPage);
     const totalPages = Math.ceil(data.length / itemsPerPage);
 
+    const handlePrevPage = () => {
+        if (page > 1) {
+            setPage(page - 1);
+        }
+    };
+
+    const handleNextPage = () => {
+        if (page < totalPages) {
+            setPage(page + 1);
+        }
+    };
+
     return (
         <div>
             {!showTable && (
@@ -52,13 +64,11 @@ const DetailTable = ({ data = [] }) => {
                                             ? item.parsed_text.slice(0, 20) + "..."
                                             : item.parsed_text}
                                     </TableCell>
-
                                     <TableCell>{item.from_partner_user_name}</TableCell>
                                     <TableCell>{new Date(item.time).toLocaleString()}</TableCell>
                                 </TableRow>
                             ))}
                         </TableBody>
-
                     </Table>
 
                     <div className="table-footer">
@@ -66,9 +76,9 @@ const DetailTable = ({ data = [] }) => {
                             Ẩn bớt
                         </button>
                         <div className="pending-dashboard__content__paging">
-                            <span onClick={() => page > 1 && setPage(page - 1)}>&lt;</span>
+                            <span onClick={handlePrevPage}>&lt;</span>
                             <span className="pending-dashboard__content__paging__number">{page}</span>
-                            <span onClick={() => page < totalPages && setPage(page + 1)}>&gt;</span>
+                            <span onClick={handleNextPage}>&gt;</span>
                         </div>
                     </div>
                 </div>
