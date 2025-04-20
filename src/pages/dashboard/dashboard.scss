@@ -635,3 +635,175 @@ tr:hover {
   font-size: 12px;
   color: #555;
 }
+/* Đảm bảo khoảng cách giữa viền trên và phần tử bảng */
+.table-container {
+  overflow-y: auto;
+  max-height: 400px; /* Điều chỉnh chiều cao nếu cần */
+  border: 1px solid #ddd;
+  padding-top: 0; /* Đảm bảo không có padding phía trên */
+  margin-top: 0; /* Đảm bảo không có margin phía trên */
+}
+
+.table-container thead th {
+  position: sticky;
+  top: 0;
+  background-color: #d6f7df;  /* Màu nền của tiêu đề */
+  z-index: 1;
+  padding: 10px;  /* Điều chỉnh padding nếu cần */
+  border-top: 1px solid #ccc;  /* Đường viền cho tiêu đề */
+}
+
+/* Đảm bảo không có khoảng cách dưới tiêu đề */
+.table-container thead {
+  margin-top: 0;
+  padding-top: 0;
+}
+
+/* Dữ liệu bảng */
+.table-container tbody {
+  background-color: #fff;
+}
+.table-container .MuiTableRow-root {
+  border: 1px solid red; /* Kiểm tra xem có viền của TableRow không */
+}
+.table-container .MuiTableRow-root {
+  cursor: pointer;
+}
+.table-container tbody tr {
+  cursor: pointer; /* Đảm bảo con trỏ thay đổi khi hover */
+  pointer-events: auto; /* Đảm bảo phần tử nhận sự kiện */
+}
+
+.cursor-pointer {
+  cursor: pointer;
+}
+.hover\:bg-gray-200:hover {
+  background-color: #e0e0e0;
+}
+.table-container tbody tr {
+  cursor: pointer; /* Đảm bảo con trỏ thay đổi khi hover */
+  pointer-events: auto; /* Đảm bảo phần tử nhận sự kiện */
+}
+
+.table-container tbody tr:hover {
+  background-color: #f3f4f6;
+  cursor: pointer;
+}
+
+.table-container thead tr:hover {
+  background-color: #d1fae5 !important; /* Đảm bảo tiêu đề không bị xung đột */
+  cursor: default;
+}
+
+
+.table-container .MuiTableRow-root {
+  cursor: pointer; /* Đảm bảo con trỏ thay đổi khi hover */
+  pointer-events: auto; /* Đảm bảo phần tử nhận sự kiện */
+}
+.table-container thead th {
+  position: sticky;
+  top: 0;
+  background-color: #d6f7df;  /* Màu nền của tiêu đề */
+  z-index: 2;  /* Đảm bảo tiêu đề ở trên cùng */
+}
+.table-container {
+  cursor: pointer !important;
+}
+.table-container tbody tr {
+  cursor: pointer; /* Đảm bảo con trỏ thay đổi khi di chuột qua */
+  pointer-events: auto; /* Đảm bảo dòng bảng nhận sự kiện click */
+  z-index: 1000; /* Thêm z-index cao để đảm bảo dòng bảng nằm trên các yếu tố khác */
+}
+.table-container tbody tr {
+  pointer-events: auto !important; /* Đảm bảo sự kiện click có thể nhận được */
+}
+
+.cursor-pointer {
+  cursor: pointer !important; /* Đảm bảo rằng con trỏ thay đổi khi hover */
+}
+
+
+.table-container thead th {
+  position: sticky;
+  top: 0;
+  z-index: 1; /* Đảm bảo header không che phần Date Picker */
+  background-color: #d6f7df;
+  padding: 10px;
+}
+.table-container thead th {
+  position: sticky;
+  top: 0;
+  background-color: #d1fae5;
+  z-index: 2;  /* Đảm bảo header có z-index thấp hơn Date Picker */
+  padding: 10px;
+  border-top: 1px solid #ccc;
+}
+.date-range-group {
+  display: flex;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  overflow: hidden;
+  width: 100%;
+  z-index: 10000; /* Thêm z-index để đảm bảo nó không bị che khuất */
+}
+
+.date-range-group .custom-date-input {
+  border: none !important;
+  border-right: 1px solid #ccc;
+  flex: 1;
+  padding: 8px 12px;
+  font-size: 14px;
+  outline: none;
+  position: relative;  /* Đảm bảo vị trí tương đối để có thể điều chỉnh */
+  z-index: 10001; /* Đảm bảo không bị che khuất */
+}
+
+.react-datepicker__input-container input {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 2px;
+  font-size: 14px;
+  transition: border-color 0.3s ease;
+  z-index: 10001; /* Đảm bảo input không bị che khuất */
+}
+/* Cấu hình cho input custom */
+.custom-date-input {
+  border: 1px solid #ccc !important; /* Viền bên ngoài cho ô nhập */
+  padding: 8px 12px;
+  border-radius: 5px;
+  outline: none !important;
+  position: relative;
+}
+
+/* Loại bỏ viền của các phần tử con trong react-datepicker */
+.react-datepicker__input-container {
+  border: none !important; /* Loại bỏ viền container */
+}
+
+.react-datepicker__input-container input {
+  border: none !important; /* Loại bỏ viền input */
+  box-shadow: none !important; /* Loại bỏ bóng đổ */
+  outline: none !important; /* Loại bỏ outline */
+}
+
+/* Loại bỏ viền của dropdown tháng/năm */
+.react-datepicker__month-dropdown-wrapper,
+.react-datepicker__year-dropdown-wrapper {
+  border: none !important;
+}
+
+/* Ẩn tam giác dropdown */
+.react-datepicker__triangle {
+  display: none !important;
+}
+
+/* Loại bỏ viền của các ngày trong tháng */
+.react-datepicker__day {
+  border: none !important;
+}
+
+/* Đảm bảo không có viền khi focus vào input */
+.react-datepicker__input-container input:focus {
+  border: none !important; /* Đảm bảo không có viền khi focus */
+}

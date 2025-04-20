@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Table, TableHead, TableRow, TableCell, TableBody } from "@/components/ui/table";
 import "@/pages/dashboard/dashboard.scss";
 
-const DetailTable = ({ data = [] }) => {
+const DetailTable = ({ data = [], onRowClick }) => {
     const [showTable, setShowTable] = useState(false);
     const [page, setPage] = useState(1);
     const itemsPerPage = 10;
@@ -10,20 +10,9 @@ const DetailTable = ({ data = [] }) => {
     const pageData = data.slice(startIdx, startIdx + itemsPerPage);
     const totalPages = Math.ceil(data.length / itemsPerPage);
 
-    const handlePrevPage = () => {
-        if (page > 1) {
-            setPage(page - 1);
-        }
-    };
-
-    const handleNextPage = () => {
-        if (page < totalPages) {
-            setPage(page + 1);
-        }
-    };
-
     return (
         <div>
+            {/* Nút để hiển thị bảng chi tiết */}
             {!showTable && (
                 <div className="button-container">
                     <button onClick={() => setShowTable(true)} className="xem-chi-tiet">
@@ -32,6 +21,7 @@ const DetailTable = ({ data = [] }) => {
                 </div>
             )}
 
+            {/* Bảng chi tiết */}
             {showTable && (
                 <div className="content-wrapper">
                     <Table>
@@ -51,7 +41,11 @@ const DetailTable = ({ data = [] }) => {
                         </TableHead>
                         <TableBody>
                             {pageData.map((item, index) => (
-                                <TableRow key={item._id || index}>
+                                <TableRow
+                                    key={item._id || index} // Đảm bảo key là duy nhất
+                                    onClick={() => onRowClick(item)}  // Gọi hàm xử lý sự kiện khi click
+                                    className="cursor-pointer hover:bg-gray-200"
+                                >
                                     <TableCell>{startIdx + index + 1}</TableCell>
                                     <TableCell>{item.partner_user_code}</TableCell>
                                     <TableCell>{item.partner_user_name}</TableCell>
@@ -71,14 +65,15 @@ const DetailTable = ({ data = [] }) => {
                         </TableBody>
                     </Table>
 
+                    {/* Phân trang */}
                     <div className="table-footer">
                         <button onClick={() => setShowTable(false)} className="hide-button">
                             Ẩn bớt
                         </button>
                         <div className="pending-dashboard__content__paging">
-                            <span onClick={handlePrevPage}>&lt;</span>
+                            <span onClick={() => page > 1 && setPage(page - 1)}>&lt;</span>
                             <span className="pending-dashboard__content__paging__number">{page}</span>
-                            <span onClick={handleNextPage}>&gt;</span>
+                            <span onClick={() => page < totalPages && setPage(page + 1)}>&gt;</span>
                         </div>
                     </div>
                 </div>
